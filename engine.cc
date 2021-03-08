@@ -47,17 +47,22 @@ img::EasyImage* draw2DLines(const Lines2D &lines, const int size, const Color& b
     double Imagex = size*((xrange)/(fmax(xrange,yrange)));
     double Imagey = size*((yrange)/(fmax(xrange,yrange)));
     double d = 0.95*(Imagex/xrange);
+    for (auto line: lines){
+        line.reScale(d);
+    }
     double DCx = d*((xmin+xmax)/2);
     double DCy = d*((ymin+ymax)/2);
     double dx = Imagex/2 - DCx;
     double dy = Imagey/2 - DCy;
+    for (auto line: lines){
+        line.move(dx, dy);
+    }
     img::EasyImage* image = new img::EasyImage(Imagex,Imagey);
     image->clear(backgroundColor.imageColor());
     for (Line2D line:lines){
-        image->draw_line(roundToInt(line.getP1()->getX()*d+dx), roundToInt(line.getP1()->getY()*d+dy),
-                         roundToInt(line.getP2()->getX()*d+dx), roundToInt(line.getP2()->getY()*d+dy),
+        image->draw_line(roundToInt(line.getP1()->getX()), roundToInt(line.getP1()->getY()),
+                         roundToInt(line.getP2()->getX()), roundToInt(line.getP2()->getY()),
                          line.getImageColor());
-
     }
     return image;
 }

@@ -13,6 +13,16 @@ public:
     Point2D(double x, double y): x(x), y(y){}
     double getY() const {return y;}
     double getX() const{return x;}
+
+    void reScale(double d) {
+        x *=d;
+        y *=d;
+    }
+
+    void move(double dx, double dy) {
+        x += dx;
+        y += dy;
+    }
 };
 
 

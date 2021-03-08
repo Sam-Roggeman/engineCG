@@ -18,6 +18,16 @@ public:
     Point2D* getP2() const {return p2;}
     Color* getColor(){return color;}
     img::Color getImageColor(){return color->imageColor();}
+
+    void reScale(double factor) {
+        p1->reScale(factor);
+        p2->reScale(factor);
+    }
+
+    void move(double dx, double dy) {
+        p1->move(dx,dy);
+        p2->move(dx,dy);
+    }
 };
 
 
