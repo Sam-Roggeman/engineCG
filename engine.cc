@@ -15,6 +15,10 @@
 using Lines2D = std::list<Line2D>;
 
 
+inline int roundToInt(double d)
+{
+    return static_cast<int>(std::round(d));
+}
 
 
 void findExtrema(double &xmin, double &xmax, double &ymin, double &ymax, const Lines2D& lines){
@@ -40,17 +44,20 @@ img::EasyImage* draw2DLines(const Lines2D &lines, const int size, const Color& b
     findExtrema(xmin, xmax, ymin, ymax, lines);
     double xrange = xmax-xmin;
     double yrange = ymax-ymin;
-    double Imagex = size*(xrange)/(fmax(xrange,yrange));
-    double Imagey = size*(yrange)/(fmax(xrange,yrange));
-    double d = 0.95*Imagex/xrange;
-    double DCx = d*(xmin+xmax)/2;
-    double DCy = d*(ymin+ymax)/2;
+    double Imagex = size*((xrange)/(fmax(xrange,yrange)));
+    double Imagey = size*((yrange)/(fmax(xrange,yrange)));
+    double d = 0.95*(Imagex/xrange);
+    double DCx = d*((xmin+xmax)/2);
+    double DCy = d*((ymin+ymax)/2);
     double dx = Imagex/2 - DCx;
     double dy = Imagey/2 - DCy;
     img::EasyImage* image = new img::EasyImage(Imagex,Imagey);
     image->clear(backgroundColor.imageColor());
     for (Line2D line:lines){
-        image->draw_line(line.getP1()->getX()*d+dx, line.getP1()->getY()*d+dy, line.getP2()->getX()*d+dx, line.getP2()->getY()*d+dy, line.getImageColor());
+        image->draw_line(roundToInt(line.getP1()->getX()*d+dx), roundToInt(line.getP1()->getY()*d+dy),
+                         roundToInt(line.getP2()->getX()*d+dx), roundToInt(line.getP2()->getY()*d+dy),
+                         line.getImageColor());
+
     }
     return image;
 }
@@ -113,17 +120,6 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
     if (type == "2DLSystem"){
         twoDLSystem(configuration, lines);
     }
-
-//    for (double i = 0; i <= 10;i++){
-//        Point2D p1 = Point2D(i,0);
-//        Point2D p2 = Point2D(i,10);
-//        Color c = Color(1,0,0);
-//        lines.push_back(Line2D(p1,p2,c));
-//
-//    }
-//    Point2D p1 = Point2D(10,5);
-//    Point2D p2 = Point2D(0,5);
-//    lines.push_back(Line2D(p1,p2,Color(1,0,0)));
     img::EasyImage *image = draw2DLines(lines, size, bgcolor);
     return *image;
 }
