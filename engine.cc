@@ -57,7 +57,7 @@ img::EasyImage* draw2DLines(const Lines2D &lines, const int size, const Color& b
     for (auto line: lines){
         line.move(dx, dy);
     }
-    img::EasyImage* image = new img::EasyImage(Imagex,Imagey);
+    img::EasyImage* image = new img::EasyImage(roundToInt(Imagex),roundToInt(Imagey));
     image->clear(backgroundColor.imageColor());
     for (Line2D line:lines){
         image->draw_line(roundToInt(line.getP1()->getX()), roundToInt(line.getP1()->getY()),
