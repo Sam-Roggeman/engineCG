@@ -14,7 +14,7 @@
 #include <stack>
 
 using Lines2D = std::list<Line2D>;
-
+using Figures3D = std::list<Figuur*>;
 
 inline int roundToInt(double d)
 {
@@ -126,9 +126,9 @@ void applyTransformation(Figuur & f, const Matrix & m){
     }
 }
 
-void applyTransformation(std::vector<Figuur> & figuren, const Matrix& m){
+void applyTransformation(Figures3D & figuren, const Matrix& m){
     for (auto figuur:figuren) {
-        for (auto punt : figuur.points) {
+        for (auto punt : figuur->points) {
             punt *= m;
         }
     }
@@ -148,7 +148,7 @@ Matrix eyePointTransformationMatrix(const double alpha, const double beta, const
     return m;
 }
 
-void eyePointTrans(const Vector3D &eyepoint, std::vector<Figuur>& figuren){
+void eyePointTrans(const Vector3D &eyepoint, Figures3D & figuren){
     double alpha;
     double beta;
     double r;
@@ -205,6 +205,26 @@ void twoDLSystem(const ini::Configuration &configuration, Lines2D& lines){
 
 
 
+
+Point2D doProjection(const Vector3D &point, const double d){
+    return Point2D((d*point.x)/(-point.z),(d*point.y)/(-point.z));
+}
+
+//Lines2D doProjection(const Figures3D & figuren){
+//    std::vector<Point2D> points;
+//    Lines2D lines;
+//    for (auto figuur:figuren){
+//        for (const auto& vlak:figuur->vlakken){
+//            for (int point_index:vlak.point_indexes) {
+//                Point2D p= doProjection(figuur->points[point_index], 1.00);
+//                points.emplace_back(p);
+//            }
+//            for (auto point_it = points.begin(); point_it != points.end(); point_it++){
+//                Line2D line = Line2D();
+//            }
+//        }
+//    }
+//}
 
 img::EasyImage generate_image(const ini::Configuration &configuration)
 {
