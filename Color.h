@@ -11,11 +11,8 @@ class Color {
     double green;
     double blue;
 public:
-    Color(double red, double green, double blue ): red(red), blue(blue), green(green){};
-    Color(std::vector<double> rgb){if (rgb.size() == 3){red = rgb[0]; green=rgb[1]; blue = rgb[2]; }}
-    double getRed() const{return red;}
-    double getBlue() const{return blue;}
-    double getGreen() const{return green;}
+    Color(double red,  double blue,double green): red(red),  green(green),blue(blue){};
+    explicit Color(std::vector<double> rgb){red = rgb[0]; green=rgb[1]; blue = rgb[2]; }
     img::Color imageColor() const{return img::Color(red*255, green*255, blue*255);}
 };
 

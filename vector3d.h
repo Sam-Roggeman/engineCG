@@ -188,33 +188,16 @@ class Vector3D
 
         protected:
 
-                /**
-                 * \brief Constructs a new Vector3D object given its coordinates.
-                 *
-                 * This constructor is made protected to avoid it to be called directly.  In
-                 * order to construct a new instance of this class the Vector3D::point or
-                 * Vector3D::vector pseudo-constructors should be used.
-                 *
-                 * \param x_init The x-coordinate.
-                 * \param y_init The y-coordinate.
-                 * \param z_init The z-coordinate.
-                 * \param infty_init \c false if the vector represents a point, \c true if it represents a vector.
-                 */
-                Vector3D(const double x_init,
-                         const double y_init,
-                         const double z_init,
-                         const bool   infty_init);
-
-                /**
-                 * \brief Consructs a new Vector3D object by copying another one.
-                 *
-                 * This constructor is made protected to avoid it to be called direcly.  In order
-                 * to construct a new instance of this class the Vector3D::point or
-                 * Vector3D::vector pseudo-constructors should be used.
-                 *
-                 * \param original The vector that is copied.
-                 * \param infty_init \c false if the vector represents a point, \c true if it represents a vector.
-                 */
+    /**
+     * \brief Consructs a new Vector3D object by copying another one.
+     *
+     * This constructor is made protected to avoid it to be called direcly.  In order
+     * to construct a new instance of this class the Vector3D::point or
+     * Vector3D::vector pseudo-constructors should be used.
+     *
+     * \param original The vector that is copied.
+     * \param infty_init \c false if the vector represents a point, \c true if it represents a vector.
+     */
                 Vector3D(const Vector3D &original,
                          const bool      infty_init);
 
@@ -456,6 +439,23 @@ class Vector3D
                  * \return The normalised vector.
                  */
                 static Vector3D normalise(Vector3D arg);
+
+/**
+ * \brief Constructs a new Vector3D object given its coordinates.
+ *
+ * This constructor is made protected to avoid it to be called directly.  In
+ * order to construct a new instance of this class the Vector3D::point or
+ * Vector3D::vector pseudo-constructors should be used.
+ *
+ * \param x_init The x-coordinate.
+ * \param y_init The y-coordinate.
+ * \param z_init The z-coordinate.
+ * \param infty_init \c false if the vector represents a point, \c true if it represents a vector.
+ */
+Vector3D(const double x_init,
+         const double y_init,
+         const double z_init,
+         const bool   infty_init);
 };
 
 /**

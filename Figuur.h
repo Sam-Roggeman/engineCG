@@ -11,6 +11,7 @@
 
 class Figuur {
 public:
+    explicit Figuur(Color color) : color(color) {};
     std::vector<Vector3D> points;
     std::vector<Vlak> vlakken;
     Color color;
