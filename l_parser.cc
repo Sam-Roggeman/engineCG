@@ -17,13 +17,12 @@
  */
 
 #include "l_parser.h"
-
+#include <time.h>       /* time */
 #include <assert.h>
 #include <iostream>
 #include <iomanip>
 #include <cctype>
 #include <sstream>
-
 
 
 namespace
@@ -342,7 +341,7 @@ namespace
 		}
 		return num_parenthesis == 0;
 	}
-	void parse_rules(std::set<char> const& alphabet, std::map<char, std::string>& rules, stream_parser& parser, bool parse2D)
+	void parse_rules(std::set<char> const& alphabet, std::map<char, std::vector<std::pair<double,std::string>>>& rules, stream_parser& parser, bool parse2D)
 	{
 		parser.skip_comments_and_whitespace();
 		parser.assertChars("Rules");
@@ -353,24 +352,39 @@ namespace
 		parser.skip_comments_and_whitespace();
 		rules.clear();
 		char c = parser.getChar();
-		while (true)
-		{
-			if (!std::isalpha(c))
-				throw LParser::ParserException("Invalid Alphabet character", parser.getLine(), parser.getCol());
-			if (alphabet.find(c) == alphabet.end())
-				throw LParser::ParserException(std::string("Replacement rule specified for char '") + c + "' which is not part of the alphabet. ", parser.getLine(), parser.getCol());
-			if (rules.find(c) != rules.end())
-				throw LParser::ParserException(std::string("Double entry '") + c + "' in rules specification ", parser.getLine(), parser.getCol());
-			char alphabet_char = c;
-			parser.skip_comments_and_whitespace();
-			parser.assertChars("->");
-			parser.skip_comments_and_whitespace();
-			std::string rule = parser.readQuotedString();
-			if (!isValidRule(alphabet, rule, parse2D))
-				throw LParser::ParserException(std::string("Invalid rule specification for entry '") + alphabet_char + "' in rule specification", parser.getLine(), parser.getCol());
-			rules[alphabet_char] = rule;
-			parser.skip_comments_and_whitespace();
-			c = parser.getChar();
+		while (true) {
+            if (!std::isalpha(c))
+                throw LParser::ParserException("Invalid Alphabet character", parser.getLine(), parser.getCol());
+            if (alphabet.find(c) == alphabet.end())
+                throw LParser::ParserException(std::string("Replacement rule specified for char '") + c +
+                                               "' which is not part of the alphabet. ", parser.getLine(),
+                                               parser.getCol());
+            char alphabet_char = c;
+            parser.skip_comments_and_whitespace();
+            parser.assertChars("->");
+            parser.skip_comments_and_whitespace();
+            std::string rule = parser.readQuotedString();
+            if (!isValidRule(alphabet, rule, parse2D))
+                throw LParser::ParserException(std::string("Invalid rule specification for entry '") + alphabet_char +
+                                               "' in rule specification", parser.getLine(), parser.getCol());
+            double chance = 1.00;
+            parser.skip_comments_and_whitespace();
+            c = parser.getChar();
+            if (c == '~'){
+                parser.skip_comments_and_whitespace();
+                std::string ch = parser.readQuotedString();
+                chance = std::stod(ch);
+                parser.skip_comments_and_whitespace();
+                c = parser.getChar();
+            }
+			double total = 0;
+            rules[alphabet_char].emplace_back( std::make_pair(chance,rule));
+			for (const auto& s : rules[alphabet_char]){
+			    total += s.first;
+			    if (total > 1.00){
+			        std::cerr << "kansen overschrijden 1 voor:"<<alphabet_char<<std::endl;
+			    }
+			}
 			if (c == '}')
 				break;
 			else if (c != ',')
@@ -486,7 +500,17 @@ bool LParser::LSystem::draw(char c) const
 std::string const& LParser::LSystem::get_replacement(char c) const
 {
 	assert(get_alphabet().find(c) != get_alphabet().end());
-	return replacementrules.find(c)->second;
+    srand (time(NULL));
+    double random_val = (double) rand() / RAND_MAX;
+    double previous_chance;
+    double current_chance = 0.00;
+    for (const std::pair<double, std::string>& s : replacementrules.find(c)->second){
+        previous_chance = current_chance;
+        current_chance += s.first;
+        if (previous_chance<=random_val &&  current_chance>random_val ){
+            return s.second;
+        }
+    }
 }
 double LParser::LSystem::get_angle() const
 {

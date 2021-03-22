@@ -23,6 +23,7 @@
 #include <string>
 #include <set>
 #include <exception>
+#include <vector>
 
 
 
@@ -182,7 +183,7 @@ namespace LParser
 		        /**
 		         * \brief the replacement rules of the l-system
 		         */
-			std::map<char, std::string> replacementrules;
+			std::map<char, std::vector<std::pair<double,std::string>>> replacementrules;
 
 		        /**
 		         * \brief the number of replacements of the l-system
@@ -254,7 +255,7 @@ namespace LParser
 			 * */
 			double get_starting_angle() const;
 
-        std::string get_finalstring();
+            std::string get_finalstring();
 
     protected:
 			friend std::istream& operator>>(std::istream& in, LSystem2D& system);
@@ -264,7 +265,7 @@ namespace LParser
 			double startingAngle;
 
 
-        std::string get_finalstring(std::string current, int iterationnr, int totaliterations);
+            std::string get_finalstring(std::string current, int iterationnr, int totaliterations);
     };
 
 	class LSystem3D;
