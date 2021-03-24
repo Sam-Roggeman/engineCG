@@ -6,11 +6,13 @@
 #include <string>
 #include "list"
 #include "Line2D.h"
+#include "Vlak.h"
 #include "l_parser.h"
 #include "Figuur.h"
 #include <cmath>
 #include <limits>
 #include <stack>
+
 
 
 using Lines2D = std::list<Line2D>;
@@ -23,7 +25,7 @@ inline int roundToInt(double d)
 
 
 void findExtrema(double &xmin, double &xmax, double &ymin, double &ymax, const Lines2D& lines){
-    if ( lines.empty()){std::cerr<<"No lines";}
+    if ( lines.empty()){std::cerr<<"No lines" << std::endl;}
     for (const auto &line:lines){
         Point2D p = line.getP1();
         for (int i = 0; i<2;i++){
@@ -146,6 +148,8 @@ Matrix eyePointTransformationMatrix(const double alpha, const double beta, const
     return m;
 }
 
+
+
 void eyePointTrans(const Vector3D &eyepoint, Figures3D & figuren){
     double alpha;
     double beta;
@@ -205,9 +209,6 @@ void twoDLSystem(const ini::Configuration &configuration, Lines2D& lines){
 
 
 Point2D doProjection(const Vector3D &point, const double d){
-    if (point.z == 0){
-        std::cout << "aaa";
-    }
     return {(d*point.x)/(-point.z),(d*point.y)/(-point.z)};
 }
 
@@ -217,16 +218,18 @@ Lines2D doProjection(const Figures3D & figuren){
     for (const auto &figuur:figuren){
         for (const auto& vlak:figuur.vlakken){
             for (int point_index:vlak.point_indexes) {
-                Point2D p= doProjection(figuur.points[point_index], 1.00);
+                Point2D p= doProjection(figuur.points[point_index-1], 1.00);
                 points.emplace_back(p);
             }
             if (points.size() > 2) {
-                auto point_it_prev = points.end() - 1;
-                for (auto point_it_next = points.begin(); point_it_next != points.end(); point_it_next++) {
+                auto point_it_prev = points.begin();
+                for (auto point_it_next = points.begin()+1; point_it_next != points.end(); point_it_next++) {
                     auto line = Line2D(*point_it_prev, *(point_it_next), figuur.color);
                     lines.emplace_back(line);
                     point_it_prev = point_it_next;
                 }
+                auto line = Line2D(*points.begin(),*(points.end()-1),figuur.color);
+                lines.emplace_back(line);
             }
             else {
                 auto line = Line2D(*points.begin(), *(points.begin()+1), figuur.color);
@@ -247,7 +250,7 @@ Figuur lineDrawing(const ini::Configuration &configuration, const std::string& f
         std::string line_name = "line" + std::to_string(line_nr);
         Vlak v = Vlak();
         auto punt_inds = configuration[figure_name][line_name].as_int_tuple_or_die();
-        for (auto punt_ind:punt_inds) {
+        for (auto const &punt_ind:punt_inds) {
             v.point_indexes.emplace_back(punt_ind);
         }
         fig.vlakken.emplace_back(v);
@@ -261,14 +264,227 @@ Figuur lineDrawing(const ini::Configuration &configuration, const std::string& f
         v.z = punt_pos[2];
         fig.points.emplace_back(v);
     }
-    Matrix m_s = scalingMatrix(configuration[figure_name]["scale"].as_double_or_die());
-    Matrix m_x = rotateX(configuration[figure_name]["rotateX"].as_double_or_die()* M_PI/180);
-    Matrix m_y = rotateY(configuration[figure_name]["rotateY"].as_double_or_die()* M_PI/180);
-    Matrix m_z = rotateZ(configuration[figure_name]["rotateZ"].as_double_or_die()* M_PI/180);
-    applyTransformation(fig, m_s*m_x*m_y*m_z);
     return fig;
 }
+
+Figuur createCube(Color c){
+    Figuur f = Figuur(c);
+    f.points.emplace_back(Vector3D::point(1,-1,-1));
+    f.points.emplace_back(Vector3D::point(-1,1,-1));
+    f.points.emplace_back(Vector3D::point(1,1,1));
+    f.points.emplace_back(Vector3D::point(-1,-1,1));
+    f.points.emplace_back(Vector3D::point(1,1,-1));
+    f.points.emplace_back(Vector3D::point(-1,-1,-1));
+    f.points.emplace_back(Vector3D::point(1,-1,1));
+    f.points.emplace_back(Vector3D::point(-1,1,1));
+    f.vlakken.emplace_back(Vlak({1,5,3,7}));
+    f.vlakken.emplace_back(Vlak({5,2,8,3}));
+    f.vlakken.emplace_back(Vlak({2,6,4,8}));
+    f.vlakken.emplace_back(Vlak({6,1,7,4}));
+    f.vlakken.emplace_back(Vlak({7,3,8,4}));
+    f.vlakken.emplace_back(Vlak({1,6,2,5}));
+    return f;
+}
+
+Figuur createTetrahedron(Color color) {
+    Figuur f = Figuur(color);
+    f.points.emplace_back(Vector3D::point(1,-1,-1));
+    f.points.emplace_back(Vector3D::point(-1,1,-1));
+    f.points.emplace_back(Vector3D::point(1,1,1));
+    f.points.emplace_back(Vector3D::point(-1,-1,1));
+    f.vlakken.emplace_back(Vlak({1,2,3}));
+    f.vlakken.emplace_back(Vlak({2,4,3}));
+    f.vlakken.emplace_back(Vlak({1,4,2}));
+    f.vlakken.emplace_back(Vlak({1,3,4}));
+    return f;
+}
+
+Figuur createOctahedron(Color color) {
+    Figuur f = Figuur(color);
+    f.points.emplace_back(Vector3D::point(1,0,0));
+    f.points.emplace_back(Vector3D::point(0,1,0));
+    f.points.emplace_back(Vector3D::point(-1,0,0));
+    f.points.emplace_back(Vector3D::point(0,-1,0));
+    f.points.emplace_back(Vector3D::point(0,0,-1));
+    f.points.emplace_back(Vector3D::point(0,0,1));
+    f.vlakken.emplace_back(Vlak({1,2,6}));
+    f.vlakken.emplace_back(Vlak({2,3,6}));
+    f.vlakken.emplace_back(Vlak({3,4,6}));
+    f.vlakken.emplace_back(Vlak({4,1,6}));
+    f.vlakken.emplace_back(Vlak({2,1,5}));
+    f.vlakken.emplace_back(Vlak({3,2,5}));
+    f.vlakken.emplace_back(Vlak({4,3,5}));
+    f.vlakken.emplace_back(Vlak({1,4,5}));
+    return f;
+}
+
+Figuur createIcosahedron(Color color) {
+    Figuur f = Figuur(color);
+    f.points.emplace_back(Vector3D::point(0,0,sqrt(5)/2));
+    for (int i = 2; i< 7;i++){
+        double d = (i-2)*2*M_PI/5;
+        f.points.emplace_back(Vector3D::point(cos(d), sin(d),0.5));
+    }
+    for (int i = 7; i< 12;i++){
+        double d = (i-7)*2*M_PI/5+M_PI/5;
+        f.points.emplace_back(Vector3D::point(cos(d), sin(d),-0.5));
+    }
+    f.points.emplace_back(Vector3D::point(0,0,-sqrt(5)/2));
+
+    f.vlakken.emplace_back(Vlak({1,2,3}));
+    f.vlakken.emplace_back(Vlak({1,3,4}));
+    f.vlakken.emplace_back(Vlak({1,4,5}));
+    f.vlakken.emplace_back(Vlak({1,5,6}));
+    f.vlakken.emplace_back(Vlak({1,6,2}));
+
+    f.vlakken.emplace_back(Vlak({2,7,3}));
+    f.vlakken.emplace_back(Vlak({3,7,8}));
+    f.vlakken.emplace_back(Vlak({3,8,4}));
+    f.vlakken.emplace_back(Vlak({4,8,9}));
+    f.vlakken.emplace_back(Vlak({4,9,5}));
+
+    f.vlakken.emplace_back(Vlak({5,9,10}));
+    f.vlakken.emplace_back(Vlak({5,10,6}));
+    f.vlakken.emplace_back(Vlak({6,10,11}));
+    f.vlakken.emplace_back(Vlak({6,11,2}));
+    f.vlakken.emplace_back(Vlak({2,11,7}));
+
+    f.vlakken.emplace_back(Vlak({12,8,7}));
+    f.vlakken.emplace_back(Vlak({12,9,8}));
+    f.vlakken.emplace_back(Vlak({12,10,9}));
+    f.vlakken.emplace_back(Vlak({12,11,10}));
+    f.vlakken.emplace_back(Vlak({12,7,11}));
+
+    return f;
+}
+
+Figuur createDodecahedron(Color color) {
+    Figuur f = Figuur(color);
+    Figuur ico = createIcosahedron(color);
+    for (const Vlak& ico_vlak:ico.vlakken){
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        for (int ico_ind:ico_vlak.point_indexes) {
+            x += ico.points[ico_ind-1].x;
+            y += ico.points[ico_ind-1].y;
+            z += ico.points[ico_ind-1].z;
+        }
+        f.points.emplace_back(Vector3D::point(x/3,y/3,z/3));
+    }
+    f.vlakken.emplace_back(Vlak({1,2,3,4,5}));
+    f.vlakken.emplace_back(Vlak({1,6,7,8,2}));
+    f.vlakken.emplace_back(Vlak({2,8,9,10,3}));
+    f.vlakken.emplace_back(Vlak({3,10,11,12,4}));
+    f.vlakken.emplace_back(Vlak({4,12,13,14,5}));
+
+    f.vlakken.emplace_back(Vlak({5,14,15,6,1}));
+    f.vlakken.emplace_back(Vlak({20,19,18,17,16}));
+    f.vlakken.emplace_back(Vlak({20,15,14,13,19}));
+    f.vlakken.emplace_back(Vlak({19,13,12,11,18}));
+    f.vlakken.emplace_back(Vlak({18,11,10,9,17}));
+
+    f.vlakken.emplace_back(Vlak({17,9,8,7,16}));
+    f.vlakken.emplace_back(Vlak({16,7,6,15,20}));
+
+    return f;
+}
+
+Figuur createSphere(int iterations, Color color) {
+    Figuur f = createIcosahedron(color);
+    int nr = 0;
+    while (nr < iterations) {
+        std::vector<Vlak> new_vlakken = {};
+        nr++;
+        for (const Vlak &vlak:f.vlakken) {
+            int p_ind1 = vlak.point_indexes[0];
+            int p_ind2 = vlak.point_indexes[1];
+            int p_ind3 = vlak.point_indexes[2];
+            Vector3D p1 = f.points[p_ind1-1];
+            Vector3D p2 = f.points[p_ind2-1];
+            Vector3D p3 = f.points[p_ind3-1];
+            Vector3D p4 = Vector3D::point((p1.x + p2.x) / 2, (p1.y + p2.y) / 2, (p1.z + p2.z) / 2);
+            Vector3D p5 = Vector3D::point((p1.x + p3.x) / 2, (p1.y + p3.y) / 2, (p1.z + p3.z) / 2);
+            Vector3D p6 = Vector3D::point((p2.x + p3.x) / 2, (p2.y + p3.y) / 2, (p2.z + p3.z) / 2);
+            int p_ind4 = f.points.size()+1;
+            int p_ind5 = f.points.size()+2;
+            int p_ind6 = f.points.size()+3;
+            new_vlakken.emplace_back(Vlak({p_ind1,p_ind4,p_ind5}));
+            new_vlakken.emplace_back(Vlak({p_ind2,p_ind6,p_ind4}));
+            new_vlakken.emplace_back(Vlak({p_ind3,p_ind5,p_ind6}));
+            new_vlakken.emplace_back(Vlak({p_ind4,p_ind6,p_ind5}));
+            f.points.emplace_back(p4);
+            f.points.emplace_back(p5);
+            f.points.emplace_back(p6);
+        }
+        f.vlakken = new_vlakken;
+    }
+    for (Vector3D& point:f.points){
+        point.normalise();
+    }
+    return f;
+}
+
+Figuur createCone(const double height,const int nr_vlakken, Color c){
+    Figuur f = Figuur(c);
+    for (int i = 0; i < nr_vlakken; i++){
+        f.points.emplace_back(Vector3D::point(cos(2*i*M_PI/nr_vlakken),sin(2*i*M_PI/nr_vlakken),0));
+    }
+    f.points.emplace_back(Vector3D::point(0,0,height));
+    std::vector<int> grd_ind = {};
+    for (int i = 0; i < nr_vlakken; i++) {
+        f.vlakken.emplace_back(Vlak({i+1, (i+1)%(nr_vlakken)+1,nr_vlakken+1}));
+        grd_ind.emplace_back(i+1);
+    }
+    f.vlakken.emplace_back(grd_ind);
+
+    return f;
+}
+
+Figuur createCylinder(const double height,const int nr_vlakken, Color c){
+    Figuur f = Figuur(c);
+    for (int i = 0; i < nr_vlakken; i++){
+        f.points.emplace_back(Vector3D::point(cos(2*i*M_PI/nr_vlakken),sin(2*i*M_PI/nr_vlakken),0));
+    }
+    for (int i = 0; i < nr_vlakken; i++){
+        f.points.emplace_back(Vector3D::point(cos(2*i*M_PI/nr_vlakken),sin(2*i*M_PI/nr_vlakken),height));
+    }
+    std::vector<int> grd_ind = {};
+    std::vector<int> bov_ind = {};
+    for (int i = 0; i < nr_vlakken; i++) {
+        f.vlakken.emplace_back(Vlak({i+1, (i+1)%(nr_vlakken)+1, nr_vlakken+(i+1)%(nr_vlakken)+1,i+1+nr_vlakken}));
+        grd_ind.emplace_back(i+1);
+        bov_ind.emplace_back(i+1+nr_vlakken);
+    }
+    f.vlakken.emplace_back(grd_ind);
+    f.vlakken.emplace_back(bov_ind);
+    return f;
+}
+
+Figuur createTorus(double r, double R, int n, int m, Color color) {
+    Figuur f = Figuur(color);
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < m; j++) {
+            double u = (2*i*M_PI)/n;
+            double v = (2*j*M_PI)/m;
+            f.points.emplace_back(Vector3D::point((R+r*cos(v))*cos(u),(R+r*cos(v))*sin(u),r*sin(v)));
+        }
+    }
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            f.vlakken.emplace_back(Vlak({i*n+j+1, n*((i+1)%n) + j + 1, n*((i+1)%n) + (j+1)%m +1 ,n*i+1+(j+1)%m}));
+        }
+    }
+    return f;
+}
+
+Figuur threeDLsystem(const ini::Configuration &configuration, Lines2D &list) {
+    return Figuur(Color());
+}
+
+
 void wireFrame(const ini::Configuration &configuration, Lines2D& lines){
+    Figuur f = Figuur(Color(1,1,1));
     int nr_figures = configuration["General"]["nrFigures"].as_int_or_die();
     std::vector<int> eye_pos = configuration["General"]["eye"].as_int_tuple_or_die();
     Vector3D eye_vector = Vector3D(eye_pos[0], eye_pos[1],eye_pos[2], true);
@@ -276,15 +492,66 @@ void wireFrame(const ini::Configuration &configuration, Lines2D& lines){
     for (int figure_nr = 0; figure_nr < nr_figures; figure_nr++){
         std::string name = "Figure"+std::to_string(figure_nr);
         std::string type = configuration[name]["type"].as_string_or_die();
+        Color c = Color(configuration[name]["color"].as_double_tuple_or_die());
+
+        double s = configuration[name]["scale"].as_double_or_die();
+        double r_x = configuration[name]["rotateX"].as_double_or_die();
+        double r_y = configuration[name]["rotateY"].as_double_or_die();
+        double r_z = configuration[name]["rotateZ"].as_double_or_die();
+        std::vector<double> v = configuration[name]["center"].as_double_tuple_or_die();
+        Vector3D center = Vector3D::vector(v[0],v[1],v[2]);
         if (type == "LineDrawing"){
-            figuren.emplace_back(lineDrawing(configuration, name));
+            f = lineDrawing(configuration, name);
         }
+        else if (type == "Cube"){
+            f = createCube(c);
+        }
+        else if (type == "Tetrahedron"){
+            f = createTetrahedron(c);
+        }
+        else if (type == "Octahedron"){
+            f = createOctahedron(c);
+        }
+        else if (type == "Icosahedron"){
+            f = createIcosahedron(c);
+        }
+        else if (type == "Dodecahedron"){
+            f = createDodecahedron(c);
+        }
+        else if (type == "Cylinder"){
+            int n = configuration[name]["n"].as_int_or_die();
+            double h = configuration[name]["height"].as_double_or_die();
+            f = createCylinder(h,n,c);
+        }
+        else if (type == "Cone"){
+            int n = configuration[name]["n"].as_int_or_die();
+            double h = configuration[name]["height"].as_double_or_die();
+            f = createCone(h,n,c);
+        }
+        else if (type == "Sphere"){
+            int n = configuration[name]["n"].as_int_or_die();
+            f = createSphere(n,c);
+        }
+        else if (type == "Torus"){
+            double r = configuration[name]["r"].as_double_or_die();
+            double R = configuration[name]["R"].as_double_or_die();
+            int n = configuration[name]["n"].as_int_or_die();
+            int m= configuration[name]["m"].as_int_or_die();
+            f = createTorus(r, R, n,m, c);
+        }
+        else if (type == "3DLSystem"){
+            f = threeDLsystem(configuration, lines);
+        }
+        else {
+            std::cerr << "type: " << type << " not found"<<std::endl;
+        }
+        applyTransformation(f,transformationMatrix(s,r_x*M_PI/180,r_y*M_PI/180,r_z*M_PI/180,center));
+        figuren.emplace_back(f);
+
     }
     eyePointTrans(eye_vector,figuren);
     auto lines2 = doProjection(figuren);
     lines.insert(lines.end(), lines2.begin(), lines2.end() );
-
-
 }
 
 
@@ -297,14 +564,14 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
     Lines2D lines = {};
     if (type == "2DLSystem"){
         twoDLSystem(configuration, lines);
-        return *draw2DLines(lines, size, bgcolor);
     }
     else if (type == "Wireframe"){
         wireFrame(configuration,lines);
-        return *draw2DLines(lines, size, bgcolor);
     }
-    return img::EasyImage();
+    return *draw2DLines(lines, size, bgcolor);
 }
+
+
 
 int main(int argc, char const* argv[])
 {

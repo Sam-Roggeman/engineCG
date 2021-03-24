@@ -52,6 +52,8 @@ Matrix::~Matrix()
         // Empty...
 }
 
+
+
 Matrix &Matrix::operator=(const Matrix &original)
 {
         for (int i = 0; i <= NR_DIMS; ++i)

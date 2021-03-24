@@ -15,6 +15,7 @@ public:
     std::vector<Vector3D> points;
     std::vector<Vlak> vlakken;
     Color color;
+
 };
 
 
