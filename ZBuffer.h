@@ -6,21 +6,33 @@
 #define ENGINE_ZBUFFER_H
 #include <vector>
 #include <limits>
+#include <iostream>
 
 class ZBuffer: public std::vector<std::vector<double>> {
-
-    const int height;
-    const int width;
+    int i = 0;
 public:
 
-    ZBuffer(const int width, const int height) : width(width), height(height){
-        this->reserve(height);
-        for (std::vector<double> &hor:*this){
-            hor.reserve(width);
-            for (double &pixel_z:hor){
+    ZBuffer(const int width, const int height){
+        (*this).resize(height);
+        for (std::vector<double> &hor:*this) {
+            hor.resize(width);
+            for (double &pixel_z:hor) {
                 pixel_z = std::numeric_limits<double>::max();
             }
+        }
     }
+    double getZ(int row, int column){
+        return (*this)[row][column];
+    };
+    bool changeIfCloser(unsigned int row, unsigned int column, double z_inverse){
+
+        double *current = &((*this).at(row).at(column));
+        if (*current>z_inverse) {
+            *current = z_inverse;
+            return true;
+        }
+        return false;
+    };
 };
 
 

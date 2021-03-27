@@ -39,7 +39,7 @@ void findExtrema(double &xmin, double &xmax, double &ymin, double &ymax, const L
 }
 
 
-img::EasyImage* draw2DLines(Lines2D &lines, const int size, const Color& backgroundColor) {
+img::EasyImage *draw2DLines(Lines2D &lines, const int size, const Color &backgroundColor, bool zbuf) {
     double xmin = std::numeric_limits<double>::max();
     double xmax = std::numeric_limits<double>::min();
     double ymin = std::numeric_limits<double>::max();
@@ -61,11 +61,20 @@ img::EasyImage* draw2DLines(Lines2D &lines, const int size, const Color& backgro
         line.move(dx, dy);
     }
     auto* image = new img::EasyImage(roundToInt(Imagex),roundToInt(Imagey));
+    ZBuffer zbuffer = ZBuffer(roundToInt(Imagex),roundToInt(Imagey));
+
     image->clear(backgroundColor.imageColor());
     for (const Line2D &line:lines){
-        image->draw_line(roundToInt(line.getP1().getX()), roundToInt(line.getP1().getY()),
+        if (zbuf){
+            image->draw_zbuf_line(zbuffer,roundToInt(line.getP1().getX()), roundToInt(line.getP1().getY()),
+                                  roundToInt(line.getP2().getX()), roundToInt(line.getP2().getY()),
+                                  line.getImageColor(),line.getZ1(),line.getZ2());
+        }
+        else {
+            image->draw_line(roundToInt(line.getP1().getX()), roundToInt(line.getP1().getY()),
                          roundToInt(line.getP2().getX()), roundToInt(line.getP2().getY()),
                          line.getImageColor());
+        }
     }
     return image;
 }
@@ -252,7 +261,7 @@ Figuur lineDrawing(const ini::Configuration &configuration, const std::string& f
         Vlak v = Vlak();
         auto punt_inds = configuration[figure_name][line_name].as_int_tuple_or_die();
         for (auto const &punt_ind:punt_inds) {
-            v.point_indexes.emplace_back(punt_ind);
+            v.point_indexes.emplace_back(punt_ind+1);
         }
         fig.vlakken.emplace_back(v);
     }
@@ -672,11 +681,23 @@ img::EasyImage generate_image(const ini::Configuration &configuration)
     Lines2D lines = {};
     if (type == "2DLSystem"){
         twoDLSystem(configuration, lines);
+        return *draw2DLines(lines, size, bgcolor, false);
     }
     else if (type == "Wireframe"){
         wireFrame(configuration,lines);
+        return *draw2DLines(lines, size, bgcolor, false);
     }
-    return *draw2DLines(lines, size, bgcolor);
+    else if (type == "ZBufferedWireframe"){
+        wireFrame(configuration,lines);
+        return *draw2DLines(lines, size, bgcolor, true);
+    }
+    else if(type == "ZBuffering"){
+        wireFrame(configuration,lines);
+        return *draw2DLines(lines, size, bgcolor, true);
+    }
+    else {
+        std::cerr<< "type: " <<type<< " not recognized"<<std::endl;
+    }
 }
 
 

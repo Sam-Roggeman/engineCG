@@ -22,17 +22,10 @@ public:
         return p1.getZ();
     }
 
-    void setZ1(double z1) {
-        p1.setZ(z1) ;
-    }
-
     double getZ2() const {
         return p2.getZ();
     }
 
-    void setZ2(double z2) {
-        p2.setZ(z2) ;
-    }
 
     Point2D getP2() const {return p2;}
     Color getColor(){return color;}
