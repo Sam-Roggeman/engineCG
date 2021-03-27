@@ -20,7 +20,6 @@
 #include <assert.h>
 #include <math.h>
 #include <iostream>
-#include "ZBuffer.h"
 
 
 #ifndef le32toh

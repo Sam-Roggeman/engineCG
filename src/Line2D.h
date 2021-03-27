@@ -28,7 +28,7 @@ public:
 
 
     Point2D getP2() const {return p2;}
-    Color getColor(){return color;}
+
     img::Color getImageColor() const {return color.imageColor();}
 
     void reScale(double factor) {

@@ -9,7 +9,6 @@
 #include <iostream>
 
 class ZBuffer: public std::vector<std::vector<double>> {
-    int i = 0;
 public:
 
     ZBuffer(const int width, const int height){
@@ -21,9 +20,7 @@ public:
             }
         }
     }
-    double getZ(int row, int column){
-        return (*this)[row][column];
-    };
+
     bool changeIfCloser(unsigned int row, unsigned int column, double z_inverse){
 
         double *current = &((*this).at(row).at(column));

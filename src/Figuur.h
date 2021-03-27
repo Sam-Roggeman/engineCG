@@ -17,7 +17,7 @@ public:
     Color color;
 
     void addpoint(double x, double y, double z) {
-        Vector3D* p = new Vector3D(x,y,z,false);
+        auto* p = new Vector3D(x,y,z,false);
         points.emplace_back(*p);
     }
 };

@@ -106,67 +106,76 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Color.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Color.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Figuur.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Figuur.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Line2D.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Line2D.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Point2D.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Point2D.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Vlak.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Vlak.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ZBuffer.cpp">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ZBuffer.h">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/easy_image.cc">
-			<Option target="engine"/>
-		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/easy_image.h">
-			<Option target="engine"/>
-		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/engine.cc">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ini_configuration.cc">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Color.cpp">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ini_configuration.h">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Color.h">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/l_parser.cc">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Figuur.cpp">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/l_parser.h">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Figuur.h">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/vector3d.cc">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Line2D.cpp">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/vector3d.h">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Line2D.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Point2D.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Point2D.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Vlak.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Vlak.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ZBuffer.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ZBuffer.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/easy_image.cc">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/easy_image.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/helpfunctions.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ini_configuration.cc">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ini_configuration.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/l_parser.cc">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/l_parser.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/matrices.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/predmadeFigures.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/vector3d.cc">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/vector3d.h">
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/CMakeLists.txt">
