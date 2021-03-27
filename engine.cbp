@@ -136,6 +136,12 @@
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/Vlak.h">
 			<Option target="engine"/>
 		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ZBuffer.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/ZBuffer.h">
+			<Option target="engine"/>
+		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/easy_image.cc">
 			<Option target="engine"/>
 		</Unit>

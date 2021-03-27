@@ -219,7 +219,6 @@ Lines2D doProjection(const Figures3D & figuren){
         for (const auto& vlak:figuur.vlakken){
             for (int point_index:vlak.point_indexes) {
                 Point2D p= doProjection(figuur.points[point_index-1], 1.00);
-                p.setZ(figuur.points[point_index-1].z);
                 points.emplace_back(p);
             }
             if (points.size() > 2) {
@@ -541,7 +540,7 @@ Figuur threeDLsystem(Color col, std::string filename) {
             z = std::get<5>(stack.top());
             stack.pop();
         }
-        else if (c == '+' || c == '-'|| c=='^'||c =='&'||c=='\\'||c=='/'|| c =='|') {
+        else if (c == '+' || c == '-'|| c=='^'||c =='&'||c=='\\'||c=='/') {
              H_temp_copy = H;
              L_temp_copy = L;
              U_temp_copy = U;
