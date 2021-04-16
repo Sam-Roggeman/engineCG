@@ -11,70 +11,70 @@
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="install/strip">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install/strip"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="install/local">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install/local"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="install">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="list_install_components">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 list_install_components"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
 				<Option working_dir="/mnt/a/School/2020-2021/CG/Week 2/Engine"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="engine">
@@ -83,12 +83,20 @@
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
-				<Compiler/>
+				<Compiler>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 engine"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 engine"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="engine/fast">
@@ -97,12 +105,20 @@
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
-				<Compiler/>
+				<Compiler>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 engine/fast"/>
-					<CompileFile command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 engine/fast"/>
+					<CompileFile command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j8 -f &quot;/mnt/a/School/2020-2021/CG/Week\ 2/Engine/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
@@ -151,7 +167,7 @@
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/easy_image.h">
 			<Option target="engine"/>
 		</Unit>
-		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/helpfunctions.cpp">
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/helpfunctions.h">
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ini_configuration.cc">

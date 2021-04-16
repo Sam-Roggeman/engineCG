@@ -12,9 +12,21 @@ class Line2D {
     Point2D p1;
     Point2D p2;
     Color color;
+
+
 public:
     Line2D(Point2D p1, Point2D p2, Color color): p1(p1), p2(p2), color(color){}
     Point2D getP1() const {return p1;}
+
+    double getZ1() const {
+        return p1.getZ();
+    }
+
+    double getZ2() const {
+        return p2.getZ();
+    }
+
+
     Point2D getP2() const {return p2;}
 
     img::Color getImageColor() const {return color.imageColor();}

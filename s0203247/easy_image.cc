@@ -22,7 +22,6 @@
 #include <iostream>
 
 
-
 #ifndef le32toh
 #define le32toh(x) (x)
 #endif
@@ -259,6 +258,89 @@ void img::EasyImage::draw_line(unsigned int x0, unsigned int y0, unsigned int x1
 		}
 	}
 }
+
+void img::EasyImage::draw_zbuf_line(ZBuffer &buf, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1,
+                                    Color color, const double z1, const double z2)
+{
+    assert(x0 < this->width && y0 < this->height);
+    assert(x1 < this->width && y1 < this->height);
+    double z_val;
+    unsigned int a;
+    unsigned int b;
+    if (x0 == x1)
+    {
+        //special case for x0 == x1
+        a = std::max(y0,y1) - std::min(y0,y1) ;
+        for (unsigned int i = std::min(y0, y1); i <= std::max(y0, y1); i++)
+        {
+            b = a - i + std::min(y0, y1);
+            z_val = ((double)b/(double)a)/z1 + (1-((double)b/(double)a))/z2;
+            if (buf.changeIfCloser(i,x0,z_val)) {
+                (*this)(x0, i) = color;
+            }
+        }
+    }
+    else if (y0 == y1)
+    {
+        //special case for y0 == y1
+        a = std::max(x0, x1) - std::min(x0, x1);
+        for (unsigned int i = std::min(x0, x1); i <= std::max(x0, x1); i++)
+        {
+            b = a -  i + std::min(x0, x1);
+            z_val = ((double)b/(double)a)/z1 + (1-((double)b/(double)a))/z2;
+            if (buf.changeIfCloser(y0,i,z_val)) {
+                (*this)(i, y0) = color;
+            }
+        }
+    }
+    else
+    {
+        if (x0 > x1)
+        {
+            //flip points if x1>x0: we want x0 to have the lowest value
+            std::swap(x0, x1);
+            std::swap(y0, y1);
+        }
+        double m = ((double) y1 - (double) y0) / ((double) x1 - (double) x0);
+        if (-1.0 <= m && m <= 1.0)
+        {
+            a = x1-x0;
+            for (unsigned int i = 0; i <= (x1 - x0); i++){
+                b = a -  i;
+                z_val = ((double)b/(double)a)/z1 + (1-((double)b/(double)a))/z2;
+                if (buf.changeIfCloser((unsigned int) round(y0 + m * i),x0 + i, z_val)) {
+                    {
+                        (*this)(x0 + i, (unsigned int) round(y0 + m * i)) = color;
+                    }
+                }
+            }
+        }
+        else if (m > 1.0)
+        {
+            a = y1 - y0;
+            for (unsigned int i = 0; i <= (y1 - y0); i++) {
+                b = a-i;
+                z_val = ((double)b/(double)a)/z1 + (1-((double)b/(double)a))/z2;
+                if (buf.changeIfCloser(y0 + i,(unsigned int) round(x0 + (i / m)),z_val)) {
+                    (*this)((unsigned int) round(x0 + (i / m)), y0 + i) = color;
+                }
+            }
+        }
+        else if (m < -1.0)
+        {
+            a = y0-y1;
+            for (unsigned int i = 0; i <= (y0 - y1); i++)
+            {
+                b = a-i;
+                z_val = ((double)b/(double)a)/z1 + (1-((double)b/(double)a))/z2;
+                if (buf.changeIfCloser(y0-i,(unsigned int) round(x0 - (i / m)),z_val)) {
+                    (*this)((unsigned int) round(x0 - (i / m)), y0 - i) = color;
+                }
+            }
+        }
+    }
+}
+
 std::ostream& img::operator<<(std::ostream& out, EasyImage const& image)
 {
 

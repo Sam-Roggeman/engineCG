@@ -21,6 +21,7 @@
 #include <vector>
 #include <iostream>
 #include <list>
+#include "ZBuffer.h"
 
 
 /**
@@ -126,119 +127,122 @@ namespace img
 	/**
 	 * \brief This class implements a 'minor' image-library that supports basic operations such as setting and retrieving a pixel, and drawing a line.
 	 */
-	class EasyImage
-	{
-		public:
-			/**
-			 * \brief Default Constructor. Creates a zero-pixel image
-			 */
-			EasyImage();
+	class EasyImage {
+    public:
+        /**
+         * \brief Default Constructor. Creates a zero-pixel image
+         */
+        EasyImage();
 
-			/**
-			 * \brief Constructor: creates a new EasyImage of the specified width and height
-			 *
-			 * \param width		the width of the image
-			 * \param height	the height of the image
-			 * \param color		(optional) the background color of the image
-			 */
-			EasyImage(unsigned int width, unsigned int height, Color color = Color());
+        /**
+         * \brief Constructor: creates a new EasyImage of the specified width and height
+         *
+         * \param width		the width of the image
+         * \param height	the height of the image
+         * \param color		(optional) the background color of the image
+         */
+        EasyImage(unsigned int width, unsigned int height, Color color = Color());
 
-			/**
-			 * \brief Copy Constructor
-			 *
-			 * \param img		the image to be copied
-			 */
-			EasyImage(EasyImage const& img);
+        /**
+         * \brief Copy Constructor
+         *
+         * \param img		the image to be copied
+         */
+        EasyImage(EasyImage const &img);
 
-			/**
-			 * \brief Destructor
-			 */
-			virtual ~EasyImage();
+        /**
+         * \brief Destructor
+         */
+        virtual ~EasyImage();
 
-			/**
-			 * \brief Assignment operator. Allows an easyImage to be assigned to another easyImage
-			 *
-			 * \param img	The image to be assigned to this image
-			 */
-			EasyImage& operator=(EasyImage const& img);
+        /**
+         * \brief Assignment operator. Allows an easyImage to be assigned to another easyImage
+         *
+         * \param img	The image to be assigned to this image
+         */
+        EasyImage &operator=(EasyImage const &img);
 
-			/**
-			 * \brief Returns the width of the image
-			 *
-			 * \return the width of the image
-			 */
-			unsigned int get_width() const;
+        /**
+         * \brief Returns the width of the image
+         *
+         * \return the width of the image
+         */
+        unsigned int get_width() const;
 
-			/**
-			 * \brief Returns the height of the image
-			 * \return the height of the image
-			 */
-			unsigned int get_height() const;
+        /**
+         * \brief Returns the height of the image
+         * \return the height of the image
+         */
+        unsigned int get_height() const;
 
-			/**
-			 * \brief Function operator. This operator returns a reference to a particular pixel of the image.
-			 *
-			 * \param x	the x coordinate of the pixel
-			 * \param y	the y coordinate of the pixel
-			 *
-			 * These assertions apply:
-			 * 	assert(x>=0 && x < getWidth())
-			 * 	assert(y>=0 && y < getHeight())
-			 */
-			Color& operator()(unsigned int x, unsigned int y);
+        /**
+         * \brief Function operator. This operator returns a reference to a particular pixel of the image.
+         *
+         * \param x	the x coordinate of the pixel
+         * \param y	the y coordinate of the pixel
+         *
+         * These assertions apply:
+         * 	assert(x>=0 && x < getWidth())
+         * 	assert(y>=0 && y < getHeight())
+         */
+        Color &operator()(unsigned int x, unsigned int y);
 
-			/**
-			 * \brief Function operator. This operator returns a const reference to a particular pixel of the image.
-			 *
-			 * \param x	the x coordinate of the pixel
-			 * \param y	the y coordinate of the pixel
-			 *
-			 * These assertions apply:
-			 * 	assert(x>=0 && x < getWidth())
-			 * 	assert(y>=0 && y < getHeight())
-			 */
-			Color const& operator()(unsigned int x, unsigned int y) const;
+        /**
+         * \brief Function operator. This operator returns a const reference to a particular pixel of the image.
+         *
+         * \param x	the x coordinate of the pixel
+         * \param y	the y coordinate of the pixel
+         *
+         * These assertions apply:
+         * 	assert(x>=0 && x < getWidth())
+         * 	assert(y>=0 && y < getHeight())
+         */
+        Color const &operator()(unsigned int x, unsigned int y) const;
 
-			/**
-			 * \brief Fills the image with a background of a specified color. Defaults to black
-			 *
-			 * \param color		The color to be assigned to each pixel
-			 */
-			void clear(Color color = Color());
+        /**
+         * \brief Fills the image with a background of a specified color. Defaults to black
+         *
+         * \param color		The color to be assigned to each pixel
+         */
+        void clear(Color color = Color());
 
-			/**
-			 * \brief Draws a line from pixel (x0,y0) to pixel (x1,y1) in the specified color
-			 *
-			 * \param x0	the x coordinate of the first pixel
-			 * \param y0	the y coordinate of the first pixel
-			 * \param x1	the x coordinate of the second pixel
-			 * \param y1	the y coordinate of the second pixel
-			 * \param color	the color of the line
-			 *
-			 * These assertions apply:
-			 *	assert(x0 < getWidth())
-			 * 	assert(y0 < getHeight())
-			 * 	assert(x1 < getWidth())
-			 * 	assert(y1 < getHeight())
-			 */
-			void draw_line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, Color color);
+        /**
+         * \brief Draws a line from pixel (x0,y0) to pixel (x1,y1) in the specified color
+         *
+         * \param x0	the x coordinate of the first pixel
+         * \param y0	the y coordinate of the first pixel
+         * \param x1	the x coordinate of the second pixel
+         * \param y1	the y coordinate of the second pixel
+         * \param color	the color of the line
+         *
+         * These assertions apply:
+         *	assert(x0 < getWidth())
+         * 	assert(y0 < getHeight())
+         * 	assert(x1 < getWidth())
+         * 	assert(y1 < getHeight())
+         */
+        void draw_line(unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1, Color color);
+
+        void draw_zbuf_line(ZBuffer &buf, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1,
+                            Color color, const double z1, const double z2);
 
 
-		private:
-			friend std::istream& operator>>(std::istream& in, EasyImage & image);
-			/**
-			 * \brief the width of the image
-			 */
-			unsigned int width;
-			/**
-			 * \brief the height of the image
-			 */
-			unsigned int height;
-			/**
-			 * \brief the vector containing all pixels
-			 */
-			std::vector<Color> bitmap;
-	};
+    private:
+        friend std::istream &operator>>(std::istream &in, EasyImage &image);
+
+        /**
+         * \brief the width of the image
+         */
+        unsigned int width;
+        /**
+         * \brief the height of the image
+         */
+        unsigned int height;
+        /**
+         * \brief the vector containing all pixels
+         */
+        std::vector<Color> bitmap;
+    };
 
 	/**
 	 * \brief Writes an img::EasyImage to an output stream in the BMP file format

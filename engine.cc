@@ -155,8 +155,8 @@ Lines2D doProjection(const Figures3D & figuren){
     for (const auto &figuur:figuren){
         for (const auto& vlak:figuur.vlakken){
             for (int point_index:vlak.point_indexes) {
-                Point2D p= doProjection(figuur.points[point_index-1], 1.00);
-                p.setZ(figuur.points[point_index-1].z);
+                Point2D p= doProjection(figuur.points[point_index], 1.00);
+                p.setZ(figuur.points[point_index].z);
                 points.emplace_back(p);
             }
             if (points.size() > 2) {
@@ -189,7 +189,7 @@ Figuur lineDrawing(const ini::Configuration &configuration, const std::string& f
         Vlak v = Vlak();
         auto punt_inds = configuration[figure_name][line_name].as_int_tuple_or_die();
         for (auto const &punt_ind:punt_inds) {
-            v.point_indexes.emplace_back(punt_ind+1);
+            v.point_indexes.emplace_back(punt_ind);
         }
         fig.vlakken.emplace_back(v);
     }
@@ -253,7 +253,7 @@ Figuur threeDLsystem(Color col, const std::string& filename) {
 
                 f.addpoint(prevx, prevy, prevz);
                 f.addpoint(x, y, z);
-                f.vlakken.emplace_back(Vlak({i+1,i+2}));
+                f.vlakken.emplace_back(Vlak({i,i+1}));
             }
         }
 
