@@ -259,6 +259,10 @@ void img::EasyImage::draw_line(unsigned int x0, unsigned int y0, unsigned int x1
 	}
 }
 
+void img::EasyImage::draw_pixel(unsigned int x, unsigned int y, Color color){
+    (*this)(x, y) = color;
+}
+
 void img::EasyImage::draw_zbuf_line(ZBuffer &buf, unsigned int x0, unsigned int y0, unsigned int x1, unsigned int y1,
                                     Color color, const double z1, const double z2)
 {

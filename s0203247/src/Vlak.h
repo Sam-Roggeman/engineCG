@@ -12,6 +12,8 @@ public:
     std::vector<int> point_indexes;
     Vlak(){point_indexes={};};
     Vlak(std::vector<int> point_indexes) : point_indexes(std::move(point_indexes)){};
+
+
 };
 
 

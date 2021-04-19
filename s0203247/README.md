@@ -20,8 +20,8 @@ X: Niet werkend of niet geïmplementeerd
 |   | Torus                     | V |
 |   | 3D L-systemen             | V |
 | 4 | Z-buffering (lijnen)      | V |
-| 5 | Triangulatie              |   |
-|   | Z-buffering (driehoeken)  |   |
+| 5 | Triangulatie              | V |
+|   | Z-buffering (driehoeken)  | V |
 | 6 | 3D fractalen              |   |
 |   | BuckyBall                 |   |
 |   | Mengerspons               |   |

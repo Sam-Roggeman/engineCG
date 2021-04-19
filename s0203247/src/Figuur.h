@@ -15,6 +15,7 @@ public:
     std::vector<Vector3D> points;
     std::vector<Vlak> vlakken;
     Color color;
+    std::vector<Vlak> triangulated;
 
     void addpoint(double x, double y, double z) {
         auto* p = new Vector3D(x,y,z,false);

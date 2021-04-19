@@ -435,7 +435,9 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
          xrBC = std::numeric_limits<int>::min();
         count = 0;
         if (proA.getY() != proB.getY() && (y-proA.getY())*(y-proB.getY()) <= 0){
-            xrAB = proB.getX() + (proA.getX()-proB.getX())*((y-proB.getY())/(proA.getY()-proB.getY()));
+            double rico = ((y-proB.getY())/(proA.getY()-proB.getY()));
+            double yver =  (proA.getX()-proB.getX());
+            xrAB = proB.getX() + yver*rico;
             xlAB = xrAB;
             count +=1;
         }
@@ -449,16 +451,20 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
             xlBC = xrBC;
             count +=1;
         }
+//        if (count == 1){
+//            if ()
+//        }
         xl = roundToInt(std::min({xlAB,xlBC,xlAC})+0.5);
         xr = roundToInt(std::max({xrAB,xrBC,xrAC})-0.5);
         if (count <2) continue;
         for (int x = xl; x <= xr; x++) {
-            z_inv = 1.0001* (1 / z_inv_g) + (x-x_g)*dzdx + (y-y_g)*dzdy;
+            z_inv = (1 / z_inv_g) + (x-x_g)*dzdx + (y-y_g)*dzdy;
             if (zbuf.changeIfCloser(y,x,-z_inv)){
                 image.draw_pixel((unsigned int) x,(unsigned int)y, color.imageColor());
             }
         }
     }
+
 }
 
 img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const int size) {
@@ -493,10 +499,6 @@ img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const i
         }
     }
     return image;
-}
-
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale){
-
 }
 
 img::EasyImage generate_image(const ini::Configuration &configuration)

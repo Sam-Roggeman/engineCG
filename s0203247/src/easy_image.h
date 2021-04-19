@@ -227,6 +227,8 @@ namespace img
                             Color color, const double z1, const double z2);
 
 
+        void draw_pixel(unsigned int x, unsigned int y, Color color);
+
     private:
         friend std::istream &operator>>(std::istream &in, EasyImage &image);
 
@@ -242,6 +244,7 @@ namespace img
          * \brief the vector containing all pixels
          */
         std::vector<Color> bitmap;
+
     };
 
 	/**
