@@ -17,13 +17,17 @@ public:
     Color color = Color(0, 0, 0);
 
     void addpoint(double x, double y, double z) {
-        auto* p = new Vector3D(x,y,z,false);
-        points.emplace_back(*p);
+        auto p = Vector3D(x,y,z,false);
+        points.emplace_back(p);
     }
 
     Figuur(const Figuur& f){
-        points = f.points;
-        vlakken = f.vlakken;
+        for (const auto &point: f.points){
+            this->points.emplace_back(Vector3D(point));
+        }
+        for (const auto& vlak:f.vlakken ){
+            vlakken.emplace_back(Vlak(vlak));
+        }
         color = f.color;
 
     }

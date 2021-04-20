@@ -95,6 +95,28 @@ Figuur createIcosahedron(Color color) {
     return f;
 }
 
+Figuur createBuckyball(Color color) {
+    Figuur f = Figuur(color);
+    f.points.emplace_back(Vector3D::point(0,0,sqrt(5)/2));
+    for (int i = 2; i< 7;i++){
+        double d = (i-2)*2*M_PI/5;
+        f.points.emplace_back(Vector3D::point(cos(d), sin(d),0.5));
+    }
+    for (int i = 7; i< 12;i++){
+        double d = (i-7)*2*M_PI/5+M_PI/5;
+        f.points.emplace_back(Vector3D::point(cos(d), sin(d),-0.5));
+    }
+    f.points.emplace_back(Vector3D::point(0,0,-sqrt(5)/2));
+    Figuur bucky = Figuur(color);
+    bucky.points.reserve(f.points.size()*6);
+    for (auto & point:f.points){
+
+    }
+
+
+    return f;
+}
+
 Figuur createDodecahedron(Color color) {
     Figuur f = Figuur(color);
     Figuur ico = createIcosahedron(color);

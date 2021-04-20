@@ -190,6 +190,29 @@ Lines2D doProjection(const Figures3D & figuren){
     return lines;
 }
 
+void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale, int count){
+    if (count == nr_iterations){
+        fractal.emplace_back(fig);
+        return;
+    }
+    Matrix schal_mat = scalingMatrix(1/scale);
+    Figuur f_cp = Figuur(fig);
+    Matrix trans_mat;
+    applyTransformation(f_cp, schal_mat);
+    for (int i = 0; i != fig.points.size(); i++){
+        Figuur f_cp_cp = Figuur(f_cp);
+        trans_mat = translate(fig.points[i]-f_cp_cp.points[i]);
+        applyTransformation(f_cp_cp,trans_mat);
+        generateFractal(f_cp_cp,fractal,nr_iterations,scale,count+1);
+    }
+}
+
+void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale){
+    generateFractal(fig, fractal,nr_iterations,scale, 0);
+}
+
+
+
 Figuur lineDrawing(const ini::Configuration &configuration, const std::string& figure_name) {
     Figuur fig = Figuur(Color(configuration[figure_name]["color"].as_double_tuple_or_die()));
     int nr_points = configuration[figure_name]["nrPoints"].as_int_or_die();
@@ -215,8 +238,6 @@ Figuur lineDrawing(const ini::Configuration &configuration, const std::string& f
     }
     return fig;
 }
-
-
 
 Figuur threeDLsystem(Color col, const std::string& filename) {
     Figuur f = Figuur(col);
@@ -343,45 +364,89 @@ std::list<Figuur> makeFigures(const ini::Configuration &configuration) {
         double r_z = configuration[name]["rotateZ"].as_double_or_die();
         std::vector<double> v = configuration[name]["center"].as_double_tuple_or_die();
         Vector3D center = Vector3D::vector(v[0], v[1], v[2]);
-        if (type == "LineDrawing") {
-            f = lineDrawing(configuration, name);
-        } else if (type == "Cube") {
-            f = createCube(c);
-        } else if (type == "Tetrahedron") {
-            f = createTetrahedron(c);
-        } else if (type == "Octahedron") {
-            f = createOctahedron(c);
-        } else if (type == "Icosahedron") {
-            f = createIcosahedron(c);
-        } else if (type == "Dodecahedron") {
-            f = createDodecahedron(c);
-        } else if (type == "Cylinder") {
-            int n = configuration[name]["n"].as_int_or_die();
-            double h = configuration[name]["height"].as_double_or_die();
-            f = createCylinder(h, n, c);
-        } else if (type == "Cone") {
-            int n = configuration[name]["n"].as_int_or_die();
-            double h = configuration[name]["height"].as_double_or_die();
-            f = createCone(h, n, c);
-        } else if (type == "Sphere") {
-            int n = configuration[name]["n"].as_int_or_die();
-            f = createSphere(n, c);
-        } else if (type == "Torus") {
-            double r = configuration[name]["r"].as_double_or_die();
-            double R = configuration[name]["R"].as_double_or_die();
-            int n = configuration[name]["n"].as_int_or_die();
-            int m = configuration[name]["m"].as_int_or_die();
-            f = createTorus(r, R, n, m, c);
-        } else if (type == "3DLSystem") {
-            std::string filename = configuration[name]["inputfile"].as_string_or_die();
-            f = threeDLsystem(c, filename);
+        if (type.size()<8 ||type.substr(0, 7) != "Fractal") {
+            if (type == "LineDrawing") {
+                f = lineDrawing(configuration, name);
+            } else if (type == "Cube") {
+                f = createCube(c);
+            } else if (type == "Tetrahedron") {
+                f = createTetrahedron(c);
+            } else if (type == "Octahedron") {
+                f = createOctahedron(c);
+            } else if (type == "Icosahedron") {
+                f = createIcosahedron(c);
+            } else if (type == "Dodecahedron") {
+                f = createDodecahedron(c);
+            } else if (type == "Cylinder") {
+                int n = configuration[name]["n"].as_int_or_die();
+                double h = configuration[name]["height"].as_double_or_die();
+                f = createCylinder(h, n, c);
+            } else if (type == "Cone") {
+                int n = configuration[name]["n"].as_int_or_die();
+                double h = configuration[name]["height"].as_double_or_die();
+                f = createCone(h, n, c);
+            } else if (type == "Sphere") {
+                int n = configuration[name]["n"].as_int_or_die();
+                f = createSphere(n, c);
+            } else if (type == "Torus") {
+                double r = configuration[name]["r"].as_double_or_die();
+                double R = configuration[name]["R"].as_double_or_die();
+                int n = configuration[name]["n"].as_int_or_die();
+                int m = configuration[name]["m"].as_int_or_die();
+                f = createTorus(r, R, n, m, c);
+            } else if (type == "3DLSystem") {
+                std::string filename = configuration[name]["inputfile"].as_string_or_die();
+                f = threeDLsystem(c, filename);
+            } else if (type == "BuckyBall") {
+
+            } else {
+                std::cerr << "type: " << type << " not found" << std::endl;
+            }
+            applyTransformation(f,
+                                transformationMatrix(s, r_x * M_PI / 180, r_y * M_PI / 180, r_z * M_PI / 180, center));
+            figuren.emplace_back(f);
         } else {
-            std::cerr << "type: " << type << " not found" << std::endl;
+            if (type == "FractalCube") {
+                f = createCube(c);
+
+            } else if (type == "FractalTetrahedron") {
+                f = createTetrahedron(c);
+
+            } else if (type == "FractalOctahedron") {
+                f = createOctahedron(c);
+            } else if (type == "FractalIcosahedron") {
+                f = createIcosahedron(c);
+            } else if (type == "FractalDodecahedron") {
+                f = createDodecahedron(c);
+            } else if (type == "FractalCylinder") {
+                int n = configuration[name]["n"].as_int_or_die();
+                double h = configuration[name]["height"].as_double_or_die();
+                f = createCylinder(h, n, c);
+            } else if (type == "FractalCone") {
+                int n = configuration[name]["n"].as_int_or_die();
+                double h = configuration[name]["height"].as_double_or_die();
+                f = createCone(h, n, c);
+            } else if (type == "FractalSphere") {
+                int n = configuration[name]["n"].as_int_or_die();
+                f = createSphere(n, c);
+            } else if (type == "FractalTorus") {
+                double r = configuration[name]["r"].as_double_or_die();
+                double R = configuration[name]["R"].as_double_or_die();
+                int n = configuration[name]["n"].as_int_or_die();
+                int m = configuration[name]["m"].as_int_or_die();
+                f = createTorus(r, R, n, m, c);
+            } else if (type == "FractalBuckyBall") {
+            }
+            int nr_it = configuration[name]["nrIterations"];
+            int fractalScale = configuration[name]["fractalScale"];
+            Figures3D temp;
+            generateFractal(f, temp, nr_it, fractalScale);
+            applyTransformation(f,
+                                transformationMatrix(s, r_x * M_PI / 180, r_y * M_PI / 180, r_z * M_PI / 180, center));
+            figuren.insert(figuren.end(), temp.begin(), temp.end());
         }
-        applyTransformation(f,transformationMatrix(s,r_x*M_PI/180,r_y*M_PI/180,r_z*M_PI/180,center));
-        figuren.emplace_back(f);
     }
-        return figuren;
+    return figuren;
 }
 
 void wireFrame(const ini::Configuration &configuration, Lines2D& lines){
@@ -428,11 +493,11 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
 
     for (int y = min_y; y <= max_y; y++){
         xlAB = std::numeric_limits<int>::max();
-         xlAC = std::numeric_limits<int>::max();
-         xlBC = std::numeric_limits<int>::max();
-         xrAB = std::numeric_limits<int>::min();
-         xrAC = std::numeric_limits<int>::min();
-         xrBC = std::numeric_limits<int>::min();
+        xlAC = std::numeric_limits<int>::max();
+        xlBC = std::numeric_limits<int>::max();
+        xrAB = std::numeric_limits<int>::min();
+        xrAC = std::numeric_limits<int>::min();
+        xrBC = std::numeric_limits<int>::min();
         count = 0;
         if (proA.getY() != proB.getY() && (y-proA.getY())*(y-proB.getY()) <= 0){
             xrAB = proB.getX() + (proA.getX()-proB.getX())*((y-proB.getY())/(proA.getY()-proB.getY()));
@@ -453,8 +518,8 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
         xr = roundToInt(std::max({xrAB,xrBC,xrAC})-0.5);
         if (count <2) continue;
         for (int x = xl; x <= xr; x++) {
-            z_inv = 1.0001* (1 / z_inv_g) + (x-x_g)*dzdx + (y-y_g)*dzdy;
-            if (zbuf.changeIfCloser(y,x,-z_inv)){
+            z_inv = (z_inv_g) + (x-x_g)*dzdx + (y-y_g)*dzdy;
+            if (zbuf.changeIfCloser(y,x,z_inv)){
                 image.draw_pixel((unsigned int) x,(unsigned int)y, color.imageColor());
             }
         }
@@ -495,9 +560,9 @@ img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const i
     return image;
 }
 
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale){
 
-}
+
+
 
 img::EasyImage generate_image(const ini::Configuration &configuration)
 {
@@ -568,7 +633,7 @@ int main(int argc, char const* argv[])
                 {
                     std::ofstream f_out(fileName.c_str(),std::ios::trunc | std::ios::out | std::ios::binary);
                     f_out << image;
-//                    std::cout << fileName<<" done"<<std::endl;
+                    std::cout << fileName<<" done"<<std::endl;
 
                 }
                 catch(std::exception& ex)
