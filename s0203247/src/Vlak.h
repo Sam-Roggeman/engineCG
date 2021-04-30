@@ -10,10 +10,14 @@
 class Vlak {
 public:
     std::vector<int> point_indexes;
+
     Vlak(){point_indexes={};};
     Vlak(std::vector<int> point_indexes) : point_indexes(std::move(point_indexes)){};
-
-
+    Vlak(const Vlak& vlak){
+        for (auto point_ind : vlak.point_indexes) {
+            point_indexes.emplace_back(point_ind);
+        }
+    }
 };
 
 

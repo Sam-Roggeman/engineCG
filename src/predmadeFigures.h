@@ -4,6 +4,9 @@
 
 #ifndef ENGINE_PREDMADEFIGURES_H
 #define ENGINE_PREDMADEFIGURES_H
+#include "matrices.h"
+#include <unordered_map>
+#include "helpfunctions.h"
 Figuur createCube(Color c){
     Figuur f = Figuur(c);
     f.points.emplace_back(Vector3D::point(1,-1,-1));
@@ -96,25 +99,54 @@ Figuur createIcosahedron(Color color) {
 }
 
 Figuur createBuckyball(Color color) {
-    Figuur f = Figuur(color);
-    f.points.emplace_back(Vector3D::point(0,0,sqrt(5)/2));
-    for (int i = 2; i< 7;i++){
-        double d = (i-2)*2*M_PI/5;
-        f.points.emplace_back(Vector3D::point(cos(d), sin(d),0.5));
-    }
-    for (int i = 7; i< 12;i++){
-        double d = (i-7)*2*M_PI/5+M_PI/5;
-        f.points.emplace_back(Vector3D::point(cos(d), sin(d),-0.5));
-    }
-    f.points.emplace_back(Vector3D::point(0,0,-sqrt(5)/2));
+    Figuur f = createIcosahedron(color);
+    Vector3D result;
+    Vector3D result2;
+    Vector3D start;
+    Vector3D end;
+    const Vector3D* start_ptr;
+    std::unordered_map<const Vector3D*, std::vector<Vector3D>> temppoints;
+    std::vector<int> temp;
+    std::vector<int> temp2;
     Figuur bucky = Figuur(color);
-    bucky.points.reserve(f.points.size()*6);
-    for (auto & point:f.points){
-
+    for (auto & vlak:f.vlakken){
+        temp = {};
+        for (auto p_ind = 0; p_ind < vlak.point_indexes.size(); p_ind++){
+            start = f.points[vlak.point_indexes[p_ind]];
+            end = f.points[vlak.point_indexes[(p_ind+1)%vlak.point_indexes.size()]];
+            temp.emplace_back(bucky.points.size());
+            temp.emplace_back(bucky.points.size()+1);
+            bucky.points.emplace_back(Vector3D(start.x+(end.x-start.x)/3,start.y+(end.y-start.y)/3,start.z+(end.z-start.z)/3,false));
+            bucky.points.emplace_back(Vector3D(start.x+(end.x-start.x)*2/3,start.y+(end.y-start.y)*2/3,start.z+(end.z-start.z)*2/3,false));
+        }
+        bucky.vlakken.emplace_back(Vlak(temp));
+        temp = {};
+        for (auto p_ind = 0; p_ind < vlak.point_indexes.size(); p_ind++){
+            temp = {};
+            start_ptr = &f.points[vlak.point_indexes[p_ind]];
+            end = f.points[vlak.point_indexes[(p_ind+1)%vlak.point_indexes.size()]];
+            temppoints[start_ptr].emplace_back(Vector3D(start_ptr->x+(end.x-start_ptr->x)/3,start_ptr->y+(end.y-start_ptr->y)/3,start_ptr->z+(end.z-start_ptr->z)/3,false)) ;
+        }
     }
+    for (const auto& point : f.points) {
+        for (auto &buckypoint : temppoints.at(&point)) {
+            bucky.points.emplace_back(buckypoint);
+        }
+    }
+    bucky.vlakken.emplace_back(Vlak({120,121,122,123,124}));
+    bucky.vlakken.emplace_back(Vlak({125,126,128,129,127}));
+    bucky.vlakken.emplace_back(Vlak({130,131,134,133,132}));
+    bucky.vlakken.emplace_back(Vlak({135,136,139,138,137}));
+    bucky.vlakken.emplace_back(Vlak({140,141,144,143,142}));
+    bucky.vlakken.emplace_back(Vlak({145,146,149,148,147}));
+    bucky.vlakken.emplace_back(Vlak({150,151,153,154,152}));
+    bucky.vlakken.emplace_back(Vlak({155,156,157,159,158}));
+    bucky.vlakken.emplace_back(Vlak({160,161,162,164,163}));
+    bucky.vlakken.emplace_back(Vlak({165,166,167,169,168}));
+    bucky.vlakken.emplace_back(Vlak({170,171,172,174,173}));
+    bucky.vlakken.emplace_back(Vlak({175,176,177,178,179}));
 
-
-    return f;
+    return bucky;
 }
 
 Figuur createDodecahedron(Color color) {
@@ -236,4 +268,73 @@ Figuur createTorus(double r, double R, int n, int m, Color color) {
     }
     return f;
 }
+
+Figuur createVrachtwagen(Color color){
+    Figuur f = Figuur(color);
+    f.points.emplace_back(Vector3D::point(1,-2,-1));
+    f.points.emplace_back(Vector3D::point(-1,2,-1));
+    f.points.emplace_back(Vector3D::point(1,2,1));
+    f.points.emplace_back(Vector3D::point(-1,-2,1));
+    f.points.emplace_back(Vector3D::point(1,2,-1));
+    f.points.emplace_back(Vector3D::point(-1,-2,-1));
+    f.points.emplace_back(Vector3D::point(1,-2,1));
+    f.points.emplace_back(Vector3D::point(-1,2,1));
+    f.vlakken.emplace_back(Vlak({0,4,2,6}));
+    f.vlakken.emplace_back(Vlak({4,1,7,2}));
+    f.vlakken.emplace_back(Vlak({1,5,3,7}));
+    f.vlakken.emplace_back(Vlak({5,0,6,3}));
+    f.vlakken.emplace_back(Vlak({6,2,7,3}));
+    f.vlakken.emplace_back(Vlak({0,5,1,4}));
+
+    int curr_point_ind = f.points.size();
+
+    Figuur cylinder = createCylinder(1,10, Color(0,0,0));
+    applyTransformation(cylinder,transformationMatrix(0.25, M_PI / 2, 0, 0, Vector3D(0,0,0, true)));
+    Figuur cylinder2 = Figuur(cylinder);
+    Figuur cylinder3 = Figuur(cylinder);
+    Figuur cylinder4 = Figuur(cylinder);
+    Figuur cylinder5 = Figuur(cylinder);
+    Figuur cylinder6 = Figuur(cylinder);
+    applyTransformation(cylinder, translate(Vector3D(1,-1,-1,true)));
+    applyTransformation(cylinder2, translate(Vector3D(1,0,-1,true)));
+    applyTransformation(cylinder3, translate(Vector3D(1,1,-1,true)));
+    applyTransformation(cylinder4, translate(Vector3D(-1,-1,-1,true)));
+    applyTransformation(cylinder5, translate(Vector3D(-1,0,-1,true)));
+    applyTransformation(cylinder6, translate(Vector3D(-1,1,-1,true)));
+
+    f.addfigure(cylinder);
+    f.addfigure(cylinder2);
+    f.addfigure(cylinder3);
+    f.addfigure(cylinder4);
+    f.addfigure(cylinder5);
+    f.addfigure(cylinder6);
+    return f;
+}
+
+Figuur createMengerSpons(Color c, int nr_it){
+    Figuur spons = Figuur(c);
+    Figuur cube = createCube(c);
+    Figures3D temp = {};
+    cube.addpoint(0,-1,-1);
+    cube.addpoint(0,1,-1);
+    cube.addpoint(1,0,-1);
+    cube.addpoint(-1,0,-1);
+    cube.addpoint(0,-1,1);
+    cube.addpoint(0,1,1);
+    cube.addpoint(1,0,1);
+    cube.addpoint(-1,0,1);
+    cube.addpoint(1,-1,0);
+    cube.addpoint(-1,-1,0);
+    cube.addpoint(-1,1,0);
+    cube.addpoint(1,1,0);
+
+    generateFractal(cube,temp,nr_it,3,0);
+    for (const auto & fig:temp){
+        spons.addfigure(fig);
+    }
+    return spons;
+
+}
+
+
 #endif //ENGINE_PREDMADEFIGURES_H

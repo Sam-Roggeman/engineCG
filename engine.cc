@@ -22,24 +22,7 @@
 using Lines2D = std::list<Line2D>;
 using Figures3D = std::list<Figuur>;
 
-void calculateScaleOffset(const Lines2D &lines, const int size, double &d, double& Imagex, double& Imagey, double &dx, double &dy){
-    double xmin = std::numeric_limits<double>::max();
-    double xmax = std::numeric_limits<double>::min();
-    double ymin = std::numeric_limits<double>::max();
-    double ymax = std::numeric_limits<double>::min();
-    findExtrema(xmin, xmax, ymin, ymax, lines);
-    double xrange = xmax-xmin;
-    double yrange = ymax-ymin;
-    Imagex = size*((xrange)/(fmax(xrange,yrange)));
-    Imagey = size*((yrange)/(fmax(xrange,yrange)));
-    d = 0.95*(Imagex/xrange);
 
-    double DCx = d*((xmin+xmax)/2);
-    double DCy = d*((ymin+ymax)/2);
-    dx = Imagex/2 - DCx;
-    dy = Imagey/2 - DCy;
-
-}
 
 
 img::EasyImage draw2DLines(Lines2D &lines, const int size, const Color &backgroundColor, bool zbuf) {
@@ -85,12 +68,6 @@ void toPolar(const Vector3D &point, double &alpha, double & beta, double &r){
 }
 
 
-
-void applyTransformation(Figuur & f, const Matrix & m){
-    for (auto &punt : f.points){
-        punt *= m;
-    }
-}
 
 void applyTransformation(Figures3D & figuren, const Matrix& m){
     for (auto &figuur:figuren) {
@@ -190,26 +167,25 @@ Lines2D doProjection(const Figures3D & figuren){
     return lines;
 }
 
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale, int count){
-    if (count == nr_iterations){
-        fractal.emplace_back(fig);
-        return;
-    }
-    Matrix schal_mat = scalingMatrix(1/scale);
-    Figuur f_cp = Figuur(fig);
-    Matrix trans_mat;
-    applyTransformation(f_cp, schal_mat);
-    for (int i = 0; i != fig.points.size(); i++){
-        Figuur f_cp_cp = Figuur(f_cp);
-        trans_mat = translate(fig.points[i]-f_cp_cp.points[i]);
-        applyTransformation(f_cp_cp,trans_mat);
-        generateFractal(f_cp_cp,fractal,nr_iterations,scale,count+1);
-    }
-}
 
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale){
-    generateFractal(fig, fractal,nr_iterations,scale, 0);
-}
+
+//void generateMengerPatroon(Figuur& fig, Figures3D& menger, const int nr_iterations, const double scale, int count){
+//    if (count == nr_iterations){
+//        menger.emplace_back(fig);
+//        return;
+//    }
+//    Matrix schal_mat = scalingMatrix(1/scale);
+//    Figuur f_cp = Figuur(fig);
+//    Matrix trans_mat;
+//    applyTransformation(f_cp, schal_mat);
+//    for (int i = 0; i != fig.points.size(); i++){
+//        Figuur f_cp_cp = Figuur(f_cp);
+//        trans_mat = translate(fig.points[i]-f_cp_cp.points[i]);
+//        applyTransformation(f_cp_cp,trans_mat);
+//        generateFractal(f_cp_cp, menger, nr_iterations, scale, count + 1);
+//    }
+//}
+
 
 
 
@@ -397,9 +373,18 @@ std::list<Figuur> makeFigures(const ini::Configuration &configuration) {
             } else if (type == "3DLSystem") {
                 std::string filename = configuration[name]["inputfile"].as_string_or_die();
                 f = threeDLsystem(c, filename);
-            } else if (type == "BuckyBall") {
-
-            } else {
+            }
+            else if (type == "BuckyBall") {
+                f = createBuckyball(c);
+            }
+            else if (type == "MengerSponge") {
+                int n = configuration[name]["nrIterations"].as_int_or_die();
+                f = createMengerSpons(c,n);
+            }
+                else if (type == "Vrachtwagen"){
+                f = createVrachtwagen(c);
+            }
+            else {
                 std::cerr << "type: " << type << " not found" << std::endl;
             }
             applyTransformation(f,
@@ -436,12 +421,16 @@ std::list<Figuur> makeFigures(const ini::Configuration &configuration) {
                 int m = configuration[name]["m"].as_int_or_die();
                 f = createTorus(r, R, n, m, c);
             } else if (type == "FractalBuckyBall") {
+                f = createBuckyball(c);
+            } else if (type == "FractalMengerSponge") {
+                int n = configuration[name]["nrIterations"].as_int_or_die();
+                f = createMengerSpons(c,n);
             }
             int nr_it = configuration[name]["nrIterations"];
-            int fractalScale = configuration[name]["fractalScale"];
+            double fractalScale = configuration[name]["fractalScale"];
             Figures3D temp;
             generateFractal(f, temp, nr_it, fractalScale);
-            applyTransformation(f,
+            applyTransformation(temp,
                                 transformationMatrix(s, r_x * M_PI / 180, r_y * M_PI / 180, r_z * M_PI / 180, center));
             figuren.insert(figuren.end(), temp.begin(), temp.end());
         }

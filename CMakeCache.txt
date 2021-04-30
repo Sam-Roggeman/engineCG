@@ -232,6 +232,12 @@ engine_BINARY_DIR:STATIC=/mnt/a/School/2020-2021/CG/Week 2/Engine
 //Value Computed by CMake
 engine_SOURCE_DIR:STATIC=/mnt/a/School/2020-2021/CG/Week 2/Engine
 
+//Value Computed by CMake
+src/engine_BINARY_DIR:STATIC=/mnt/a/School/2020-2021/CG/Week 2/Engine
+
+//Value Computed by CMake
+src/engine_SOURCE_DIR:STATIC=/mnt/a/School/2020-2021/CG/Week 2/Engine
+
 
 ########################
 # INTERNAL cache entries

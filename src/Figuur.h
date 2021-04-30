@@ -31,6 +31,22 @@ public:
         color = f.color;
 
     }
+
+    void addfigure(const Figuur& figuur2) {
+        int current_point_ind = points.size();
+        std::vector<int> vlak_ind;
+        for (const auto& point : figuur2.points){
+            points.emplace_back(point);
+        }
+        for (const auto& vlak:figuur2.vlakken){
+            vlak_ind = {};
+            for (const auto& point_ind: vlak.point_indexes){
+                vlak_ind.emplace_back(current_point_ind+point_ind);
+            }
+
+            vlakken.emplace_back(vlak_ind);
+        }
+    }
 };
 
 

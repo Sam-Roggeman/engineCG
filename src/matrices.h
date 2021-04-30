@@ -4,6 +4,7 @@
 
 #ifndef ENGINE_MATRICES_H
 #define ENGINE_MATRICES_H
+#include <cmath>
 Matrix eyePointTransformationMatrix(const double alpha, const double beta, const double r){
     Matrix m = Matrix();
     m(1,1) = -sin(alpha);
@@ -61,4 +62,13 @@ Matrix translate(const Vector3D &vector){
 Matrix transformationMatrix(const double scale, const double alpha_x, const double alpha_y,const double alpha_z, const Vector3D &vector){
     return scalingMatrix(scale)*rotateX(alpha_x)*rotateY(alpha_y)*rotateZ(alpha_z)*translate(vector);
 }
+
+void applyTransformation(Figuur & f, const Matrix & m){
+    for (auto &punt : f.points){
+        punt *= m;
+    }
+}
+
+
+
 #endif //ENGINE_MATRICES_H
