@@ -312,7 +312,6 @@ Figuur createVrachtwagen(Color color){
 }
 
 Figuur createMengerSpons(Color c, int nr_it){
-    Figuur spons = Figuur(c);
     Figuur cube = createCube(c);
     Figures3D temp = {};
     cube.addpoint(0,-1,-1);
@@ -328,12 +327,38 @@ Figuur createMengerSpons(Color c, int nr_it){
     cube.addpoint(-1,1,0);
     cube.addpoint(1,1,0);
 
-    generateFractal(cube,temp,nr_it,3,0);
-    for (const auto & fig:temp){
-        spons.addfigure(fig);
-    }
-    return spons;
+    return generateFractal(cube,nr_it,3);
 
+}
+
+Figuur createViewFrustum(const double FOV, const double dNear, const double dFar, const double aspectratio , Color c){
+    Figuur f = Figuur(c);
+    double right = dNear* tan(FOV*M_PI/360);
+    double top = right/aspectratio;
+
+    f.points.emplace_back(Vector3D::point(right,-top,-dNear));
+    f.points.emplace_back(Vector3D::point(right,top,-dNear));
+    f.points.emplace_back(Vector3D::point(-right,top,-dNear));
+    f.points.emplace_back(Vector3D::point(-right,-top,-dNear));
+    //1 voor
+    f.vlakken.emplace_back(Vlak({0,1,2,3}));
+    right = dFar* tan(FOV*M_PI/360);
+    top = right/aspectratio;
+    f.points.emplace_back(Vector3D::point(right,-top,-dFar));
+    f.points.emplace_back(Vector3D::point(right,top,-dFar));
+    f.points.emplace_back(Vector3D::point(-right,top,-dFar));
+    f.points.emplace_back(Vector3D::point(-right,-top,-dFar));
+    //2 achter
+    f.vlakken.emplace_back(Vlak({4,5,6,7}));
+    //3 rechts
+    f.vlakken.emplace_back(Vlak({0,4,5,1}));
+    //4 links
+    f.vlakken.emplace_back(Vlak({3,2,6,7}));
+    //5 boven
+    f.vlakken.emplace_back(Vlak({1,5,6,2}));
+    //6 onder
+    f.vlakken.emplace_back(Vlak({0,4,7,3}));
+    return f;
 }
 
 

@@ -47,6 +47,24 @@ public:
             vlakken.emplace_back(vlak_ind);
         }
     }
+
+    std::vector<Vector3D> vlakInPoints(int index)const{
+        std::vector<Vector3D> v;
+        for (int p_ind: vlakken[index].point_indexes){
+            v.emplace_back(points[p_ind]);
+        }
+        return v;
+    }
+
+    void addVlak(std::vector<Vector3D> &vector) {
+        std::vector<int> ind;
+        for (auto& hoek:vector){
+            ind.emplace_back(points.size());
+            points.emplace_back(hoek);
+        }
+        vlakken.emplace_back(Vlak(ind));
+
+    }
 };
 
 

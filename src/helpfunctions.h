@@ -100,9 +100,9 @@ void calculateScaleOffset(const Lines2D &lines, const int size, double &d, doubl
 
 }
 
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale, int count){
+void generateFractal(Figuur& fig, Figuur& fractal, const int nr_iterations, const double scale, int count){
     if (count == nr_iterations){
-        fractal.emplace_back(fig);
+        fractal.addfigure(fig);
         return;
     }
     Matrix schal_mat = scalingMatrix(1/scale);
@@ -117,9 +117,13 @@ void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, c
     }
 }
 
-void generateFractal(Figuur& fig, Figures3D& fractal, const int nr_iterations, const double scale){
+Figuur generateFractal(Figuur& fig, const int nr_iterations, const double scale){
+    Figuur fractal = Figuur(fig.color);
     generateFractal(fig, fractal,nr_iterations,scale, 0);
+    return fractal;
 }
+
+
 
 
 #endif //ENGINE_helpfunctions_H

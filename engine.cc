@@ -13,9 +13,9 @@
 #include <cmath>
 #include <limits>
 #include <stack>
-#include "src/matrices.h"
 #include <algorithm>
 #include "src/predmadeFigures.h"
+
 
 
 
@@ -86,8 +86,16 @@ void eyePointTrans(const Vector3D &eyepoint, Figures3D & figuren){
     toPolar(eyepoint,alpha,beta, r);
     Matrix m = eyePointTransformationMatrix(alpha, beta,r);
     applyTransformation(figuren,  m);
-
 }
+
+void eyePointVistrum(const Vector3D &eyepoint, const Vector3D &eye_dir, Figures3D & figuren){
+    double alpha;
+    double beta;
+    double r;
+    toPolar(-eye_dir,alpha,beta, r);
+    applyTransformation(figuren, translate(-eyepoint)* rotateZ(-(alpha+M_PI/2))* rotateX(-beta));
+}
+
 
 void twoDLSystem(const ini::Configuration &configuration, Lines2D& lines){
     std::string filename = configuration["2DLSystem"]["inputfile"].as_string_or_die();
@@ -118,7 +126,6 @@ void twoDLSystem(const ini::Configuration &configuration, Lines2D& lines){
             stack.pop();
 
         }
-
         else {
             double prevX = currentX;
             double prevY = currentY;
@@ -166,28 +173,6 @@ Lines2D doProjection(const Figures3D & figuren){
     }
     return lines;
 }
-
-
-
-//void generateMengerPatroon(Figuur& fig, Figures3D& menger, const int nr_iterations, const double scale, int count){
-//    if (count == nr_iterations){
-//        menger.emplace_back(fig);
-//        return;
-//    }
-//    Matrix schal_mat = scalingMatrix(1/scale);
-//    Figuur f_cp = Figuur(fig);
-//    Matrix trans_mat;
-//    applyTransformation(f_cp, schal_mat);
-//    for (int i = 0; i != fig.points.size(); i++){
-//        Figuur f_cp_cp = Figuur(f_cp);
-//        trans_mat = translate(fig.points[i]-f_cp_cp.points[i]);
-//        applyTransformation(f_cp_cp,trans_mat);
-//        generateFractal(f_cp_cp, menger, nr_iterations, scale, count + 1);
-//    }
-//}
-
-
-
 
 Figuur lineDrawing(const ini::Configuration &configuration, const std::string& figure_name) {
     Figuur fig = Figuur(Color(configuration[figure_name]["color"].as_double_tuple_or_die()));
@@ -428,11 +413,11 @@ std::list<Figuur> makeFigures(const ini::Configuration &configuration) {
             }
             int nr_it = configuration[name]["nrIterations"];
             double fractalScale = configuration[name]["fractalScale"];
-            Figures3D temp;
-            generateFractal(f, temp, nr_it, fractalScale);
-            applyTransformation(temp,
+
+            f = generateFractal(f,  nr_it, fractalScale);
+            applyTransformation(f,
                                 transformationMatrix(s, r_x * M_PI / 180, r_y * M_PI / 180, r_z * M_PI / 180, center));
-            figuren.insert(figuren.end(), temp.begin(), temp.end());
+            figuren.emplace_back(f);
         }
     }
     return figuren;
@@ -451,6 +436,7 @@ void wireFrame(const ini::Configuration &configuration, Lines2D& lines){
 void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
                         Vector3D const& A, Vector3D const& B, Vector3D const& C,
                         double d, double dx, double dy){
+
     Point2D proA = Point2D((d*A.x)/(-1*(A.z))+dx, (d*A.y)/(-A.z)+dy);
     Point2D proB = Point2D((d*B.x)/(-1*(B.z))+dx, (d*B.y)/(-B.z)+dy);
     Point2D proC = Point2D((d*C.x)/(-1*(C.z))+dx, (d*C.y)/(-C.z)+dy);
@@ -475,7 +461,6 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
     Vector3D v = Vector3D(C - A);
     Vector3D w = v.cross_equals(u);
     double k = w.x* A.x + w.y * A.y + A.z * w.z;
-//    Vector3D w = Vector3D(u.y*v.z-u.z*v.y,u.z*v.x-u.x,u.x*v.y-u.y-v.x,true);
     double dzdx = w.x/(-d*k);
     double dzdy = w.y/(-d*k);
 
@@ -514,38 +499,403 @@ void draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image, Color color,
         }
     }
 }
+void clipPane(std::vector<Vector3D> pane, int i, std::vector<std::vector<Vector3D>>& l) {
+    std::vector<std::vector<Vector3D>> nw_l = {};
+    double dval;
+    double dval2;
+    bool a_inside ;
+    bool b_inside ;
+    bool c_inside ;
+    const Vector3D* A;
+    const Vector3D* B;
+    const Vector3D* C;
+    const Vector3D* X;
+    const Vector3D* Y;
+    Vector3D A2;
+    Vector3D B2;
+    Vector3D C2;
+    Vector3D D2;
+    bool near = i == 0;
+    bool far = i == 1;
+    bool rechts = i ==2;
+    bool links = i ==3;
+    bool boven = i ==4;
+    bool onder = i ==5;
+    double dNear;
+    double p;
+    for ( auto triangle_it = l.begin(); triangle_it < l.end();triangle_it++){
+        int count = 0;
+        A = &triangle_it->at(0);
+        B = &triangle_it->at(1);
+        C = &triangle_it->at(2);
+        if (near || far) {
+            dval = pane[0].z;
+            if (near) {
+                a_inside = A->z <= dval;
+                b_inside = B->z <= dval;
+                c_inside = C->z <= dval;
+            } else {
+                a_inside = A->z >= dval;
+                b_inside = B->z >= dval;
+                c_inside = C->z >= dval;
+            }
+            if (a_inside) count++;
+            if (b_inside) count++;
+            if (c_inside) count++;
+            if (count ==3) {
+                A2 = *A;
+                B2 = *B;
+                C2 = *C;
+            } else if (count ==0) {
+                break;
+            } else if (count == 1) {
+                if (!a_inside && !b_inside) {
+                    //AC
+                    p = (dval - C->z) / (A->z - C->z);
+                    A2 = (p * *A) + ((1 - p) * *C);
+                    //BC
+                    p = (dval - C->z) / (B->z - C->z);
+                    B2 = (p * *B) + ((1 - p) * *C);
+                    C2 = *C;
+                } else if (!a_inside && !c_inside) {
+                    //AB
+                    p = (dval - B->z) / (A->z - B->z);
+                    A2 = (p * *A) + ((1 - p) * *B);
+                    //CB
+                    p = (dval - B->z) / (C->z - B->z);
+                    B2 = (p * *C) + ((1 - p) * *B);
+                    C2 = *B;
+                } else if (!c_inside && !b_inside) {
+                    //CA
+                    p = (dval - C->z) / (A->z - C->z);
+                    A2 = (p * *C) + ((1 - p) * *A);
+                    //BA
+                    p = (dval - A->z) / (B->z - A->z);
+                    B2 = (p * *B) + ((1 - p) * *A);
+                    C2 = *A;
+                }
+            }else if (count == 2){
+                if (!a_inside) {
+                    //AC
+                    X = A; Y = C;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //AB
+                    X = A; Y = B;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *C;
+                    C2 = *B;
+                } else if (!c_inside) {
+                    //AC
+                    X = A; Y = C;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B; Y = C;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *A;
+                    C2 = *B;
+                } else if (!b_inside) {
+                    //AB
+                    X = A; Y = B;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B; Y = C;
+                    p = (dval - Y->z) / (X->z - Y->z);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    
+                    B2 = *A;
+                    C2 = *C;
+                }
+            }
+        }else if (rechts||links){
+            dNear = -std::max(std::max(pane[0].z, pane[1].z),std::max(pane[2].z, pane[3].z));
+            dval = pane[0].x*(-dNear)/pane[0].z;
+            if (rechts) {
+                dval2 = A->x*(-dNear)/A->z;
+                a_inside = (dval2 <= dval);
+                dval2 = B->x*(-dNear)/B->z;
+                b_inside = (dval2 <= dval);
+                dval2 = C->x*(-dNear)/C->z;
+                c_inside = (dval2 <= dval);
+            } else {
+                dval2 = A->x*(-dNear)/A->z;
+                a_inside = (dval2 >= dval);
+                dval2 = B->x*(-dNear)/B->z;
+                b_inside = (dval2 >= dval);
+                dval2 = C->x*(-dNear)/C->z;
+                c_inside = (dval2 >= dval);
+            }
+            if (a_inside) count++;
+            if (b_inside) count++;
+            if (c_inside) count++;
+            if (count ==3) {
+                A2 = *A;
+                B2 = *B;
+                C2 = *C;
+            } else if (count ==0) {
+                break;
+            }else if (count == 1) {
+                if (!a_inside && !b_inside) {
+                    //AC
+                    X = A; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *C;
+                } else if (!a_inside && !c_inside) {
+                    //AB
+                    X = A; Y = B;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //CB
+                    X = C; Y = B;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *B;
+                } else if (!c_inside && !b_inside) {
+                    //AB
+                    X = A; Y = B;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //AC
+                    X = A; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *A;
+                }
+            }else if (count == 2){
+                if (!a_inside) {
+//                    A2 = *A;
+//                    B2 = *B;
+//                    C2 = *C;
+//                    D2 = *C;
+                    //AB
+                    X = A; Y = B;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //AC
+                    X = A; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *B;
+                    C2 = *C;
+                } else if (!c_inside) {
+                    //AC
+                    X = A; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *A;
+                    C2 = *B;
+                } else if (!b_inside) {
+                    //AB
+                    X = A; Y = B;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B; Y = C;
+                    p = (Y->x * dNear+Y->z*dval)/((Y->x-X->x)*dNear+(Y->z-X->z)*dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *A;
+                    C2 = *C;
+                }
+            }
+        } else if (boven||onder) {
+            dNear = -std::max(std::max(pane[0].z, pane[1].z), std::max(pane[2].z, pane[3].z));
+            dval = -pane[0].y * dNear / pane[0].z;
+            if (boven) {
+                a_inside =  -A->y*dNear/A->z <= dval;
+                b_inside = -B->y*dNear/B->z <= dval;
+                c_inside = -C->y*dNear/C->z <= dval;
+            } else {
+                a_inside = -A->y*dNear/A->z >= dval;
+                b_inside = -B->y*dNear/B->z >= dval;
+                c_inside = -C->y*dNear/C->z >= dval;
+            }
+            if (a_inside) count++;
+            if (b_inside) count++;
+            if (c_inside) count++;
+            if (count ==3) {
+                A2 = *A;
+                B2 = *B;
+                C2 = *C;
+            } else if (count ==0) {
+                break;
+            } else if (count == 1) {
+                if (!a_inside && !b_inside) {
+                    //AC
+                    X = A;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *C;
+                } else if (!a_inside && !c_inside) {
+                    //AB
+                    X = A;
+                    Y = B;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //CB
+                    X = C;
+                    Y = B;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *B;
+                } else if (!c_inside && !b_inside) {
+                    //AB
+                    X = A;
+                    Y = B;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //AC
+                    X = A;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    B2 = (p * *X) + ((1 - p) * *Y);
+                    C2 = *A;
+                }
+            } else if (count == 2) {
+                if (!a_inside) {
+                    //AB
+                    X = A;
+                    Y = B;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //AC
+                    X = A;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *B;
+                    C2 = *C;
+                } else if (!c_inside) {
+                    //BC
+                    X = B;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //CA
+                    X = C;
+                    Y = A;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *B;
+                    C2 = *A;
+                } else if (!b_inside) {
+                    //AB
+                    X = A;
+                    Y = B;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    A2 = (p * *X) + ((1 - p) * *Y);
+                    //BC
+                    X = B;
+                    Y = C;
+                    p = (Y->y * dNear + Y->z * dval) / ((Y->y - X->y) * dNear + (Y->z - X->z) * dval);
+                    D2 = (p * *X) + ((1 - p) * *Y);
+                    B2 = *A;
+                    C2 = *C;
+                }
+            }
+        }
+        if (count == 2) {
+            nw_l.emplace_back(std::vector<Vector3D>({A2, D2, C2}));
+        }
+        nw_l.emplace_back(std::vector<Vector3D>({A2,B2,C2}));
+    }
+    l.clear();
+    l = nw_l;
+}
+
+std::vector<std::vector<Vector3D>> clipVistrum(const Vector3D &A ,const Vector3D &B,const Vector3D &C,const Figuur &vistrum) {
+    std::vector<std::vector<Vector3D>> l;
+    l.emplace_back(std::vector<Vector3D>({A,B,C}));
+    for (int i = 0; i <6; i++){
+        clipPane(vistrum.vlakInPoints(i), i,l);
+    }
+    return l;
+}
 
 img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const int size) {
     std::vector<int> eye_pos = configuration["General"]["eye"].as_int_tuple_or_die();
     Color bg = Color(configuration["General"]["backgroundcolor"].as_double_tuple_or_die());
+    bool clipping = configuration["General"]["clipping"].as_bool_or_default(false);
     std::list<Figuur> figuren = makeFigures(configuration);
+    std::list<Figuur> temp_figuren;
     std::vector<Vlak> triangulated_vakken = {};
     double Imagex;
     double Imagey;
     double d;
     double dx;
     double dy;
+    std::vector<int> eye_dir_v = configuration["General"]["viewDirection"].as_int_tuple_or_default({-eye_pos[0],-eye_pos[1], -eye_pos[2]});
+    Vector3D eye_dir = Vector3D(eye_dir_v[0], eye_dir_v[1],eye_dir_v[2], true);
     Vector3D eye_vector = Vector3D(eye_pos[0], eye_pos[1],eye_pos[2], true);
-    eyePointTrans(eye_vector,figuren);
+    eyePointVistrum(eye_vector, eye_dir,figuren);
+
+    Vector3D A;
+    Vector3D B;
+    Vector3D C;
+    std::vector<std::vector<Vector3D>> clipped_triangles;
+    Figuur viewVistrum = Figuur(bg);
+    if (clipping){
+        std::vector<std::vector<Vector3D>> completed;
+        viewVistrum = createViewFrustum(configuration["General"]["hfov"].as_double_or_die(),configuration["General"]["dNear"].as_double_or_die(),
+                                        configuration["General"]["dFar"].as_double_or_die(), configuration["General"]["aspectRatio"].as_double_or_die(),
+                                        bg);
+        for (auto &figuur:figuren) {
+            completed.clear();
+            for (auto &vlak:figuur.vlakken) {
+                triangulated_vakken = triangulate(vlak);
+                for (auto &tri_vlak:triangulated_vakken) {
+                    clipped_triangles = clipVistrum(figuur.points[tri_vlak.point_indexes[0]], figuur.points[tri_vlak.point_indexes[1]], figuur.points[tri_vlak.point_indexes[2]], viewVistrum);
+                    completed.reserve(clipped_triangles.size());
+                    completed.insert(completed.end(), clipped_triangles.begin(),clipped_triangles.end());
+                }
+            }
+            figuur.points.clear();
+            figuur.vlakken.clear();
+            for (auto& vlak: completed){
+                figuur.addVlak(vlak);
+            }
+        }
+    }
     calculateScaleOffset(doProjection(figuren),size,d,Imagex,Imagey,dx,dy);
     img::EasyImage image = img::EasyImage(roundToInt(Imagex), roundToInt(Imagey));
     image.clear(bg.imageColor());
     ZBuffer z = ZBuffer(roundToInt(Imagex), roundToInt(Imagey));
-    Vector3D A;
-    Vector3D B;
-    Vector3D C;
-
-    for (auto &figuur:figuren){
-        for (auto &vlak:figuur.vlakken) {
-            triangulated_vakken = triangulate(vlak);
-            for (auto &tri_vlak:triangulated_vakken) {
-                A = figuur.points[tri_vlak.point_indexes[0]];
-                B = figuur.points[tri_vlak.point_indexes[1]];
-                C = figuur.points[tri_vlak.point_indexes[2]];
-                draw_zbuf_triangle(z, image, figuur.color, A, B, C, d, dx, dy);
+    if (clipping){
+        for (const auto &figuur:figuren) {
+            for (const auto &vlak:figuur.vlakken) {
+                draw_zbuf_triangle(z, image, figuur.color, figuur.points[vlak.point_indexes[0]], figuur.points[vlak.point_indexes[1]], figuur.points[vlak.point_indexes[2]], d, dx, dy);
             }
         }
     }
+    else {
+        for (auto &figuur:figuren) {
+            for (auto &vlak:figuur.vlakken) {
+                triangulated_vakken = triangulate(vlak);
+                for (auto &tri_vlak:triangulated_vakken) {
+                    draw_zbuf_triangle(z, image, figuur.color, figuur.points[tri_vlak.point_indexes[0]], figuur.points[tri_vlak.point_indexes[1]], figuur.points[tri_vlak.point_indexes[2]], d, dx, dy);
+                }
+            }
+        }
+    }
+
     return image;
 }
 
