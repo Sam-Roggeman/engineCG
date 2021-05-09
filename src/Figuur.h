@@ -11,39 +11,54 @@
 
 class Figuur {
 public:
-    explicit Figuur(Color color) : color(color) {};
+    Figuur(){};
+    explicit Figuur(Color color) : ambientReflection(color) {};
     std::vector<Vector3D> points;
     std::vector<Vlak> vlakken;
-    Color color = Color(0, 0, 0);
+//    Color color = Color(0, 0, 0);
+    Color ambientReflection = Color(0,0,0);
+    Color diffuseReflection = Color(0,0,0);
+    Color specularReflection = Color(0,0,0);
+    double reflectionCoefficient = 1;
+
+    void clear(){
+        points.clear();
+        vlakken.clear();
+    }
+
 
     void addpoint(double x, double y, double z) {
         auto p = Vector3D(x,y,z,false);
         points.emplace_back(p);
     }
 
+    Figuur(const Color &ambientReflection, const Color &diffuseReflection, const Color &specularReflection,
+           double &reflectionCoefficient) : ambientReflection(ambientReflection), diffuseReflection(diffuseReflection),
+                                           specularReflection(specularReflection),
+                                           reflectionCoefficient(reflectionCoefficient) {}
+
     Figuur(const Figuur& f){
-        for (const auto &point: f.points){
-            this->points.emplace_back(Vector3D(point));
-        }
-        for (const auto& vlak:f.vlakken ){
-            vlakken.emplace_back(Vlak(vlak));
-        }
-        color = f.color;
+        this->clear();
+        this->points.insert(this->points.end(),f.points.begin(),f.points.end());
+        this->vlakken.insert(this->vlakken.end(),f.vlakken.begin(),f.vlakken.end());
+
+        ambientReflection = f.ambientReflection;
+        specularReflection = f.specularReflection;
+        diffuseReflection = f.diffuseReflection;
+        reflectionCoefficient = f.reflectionCoefficient;
 
     }
 
     void addfigure(const Figuur& figuur2) {
         int current_point_ind = points.size();
         std::vector<int> vlak_ind;
-        for (const auto& point : figuur2.points){
-            points.emplace_back(point);
-        }
+        this->points.insert(this->points.end(),figuur2.points.begin(),figuur2.points.end());
+
         for (const auto& vlak:figuur2.vlakken){
             vlak_ind = {};
             for (const auto& point_ind: vlak.point_indexes){
                 vlak_ind.emplace_back(current_point_ind+point_ind);
             }
-
             vlakken.emplace_back(vlak_ind);
         }
     }

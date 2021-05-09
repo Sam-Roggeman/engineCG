@@ -125,6 +125,15 @@
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/engine.cc">
 			<Option target="engine"/>
 		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/2D.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/3D.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Clipping.h">
+			<Option target="engine"/>
+		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Color.cpp">
 			<Option target="engine"/>
 		</Unit>
@@ -135,6 +144,12 @@
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Figuur.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Light.cpp">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Light.h">
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Line2D.cpp">
@@ -153,6 +168,9 @@
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/Vlak.h">
+			<Option target="engine"/>
+		</Unit>
+		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ZBUF.h">
 			<Option target="engine"/>
 		</Unit>
 		<Unit filename="/mnt/a/School/2020-2021/CG/Week 2/Engine/src/ZBuffer.cpp">

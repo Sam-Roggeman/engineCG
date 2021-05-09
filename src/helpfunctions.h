@@ -2,18 +2,18 @@
 // Created by User on 27/03/2021.
 //
 
+
+using Lines2D = std::list<Line2D>;
+using Figures3D = std::list<Figuur>;
+
+#ifndef ENGINE_helpfunctions_H
+#define ENGINE_helpfunctions_H
 #include "Line2D.h"
 #include "vector3d.h"
 #include "matrices.h"
 #include <vector>
 #include <cmath>
 #include "Figuur.h"
-using Lines2D = std::list<Line2D>;
-using Figures3D = std::list<Figuur>;
-
-#ifndef ENGINE_helpfunctions_H
-#define ENGINE_helpfunctions_H
-
 inline int roundToInt(double d)
 {
     return static_cast<int>(std::round(d));
@@ -100,7 +100,7 @@ void calculateScaleOffset(const Lines2D &lines, const int size, double &d, doubl
 
 }
 
-void generateFractal(Figuur& fig, Figuur& fractal, const int nr_iterations, const double scale, int count){
+void generateFractal(Figuur& fig, Figuur& fractal, const int nr_iterations, const double& scale, int count){
     if (count == nr_iterations){
         fractal.addfigure(fig);
         return;
@@ -108,22 +108,54 @@ void generateFractal(Figuur& fig, Figuur& fractal, const int nr_iterations, cons
     Matrix schal_mat = scalingMatrix(1/scale);
     Figuur f_cp = Figuur(fig);
     Matrix trans_mat;
+    Figuur f_cp_cp;
     applyTransformation(f_cp, schal_mat);
     for (int i = 0; i != fig.points.size(); i++){
-        Figuur f_cp_cp = Figuur(f_cp);
+        f_cp_cp = Figuur(f_cp);
         trans_mat = translate(fig.points[i]-f_cp_cp.points[i]);
         applyTransformation(f_cp_cp,trans_mat);
         generateFractal(f_cp_cp,fractal,nr_iterations,scale,count+1);
     }
 }
 
-Figuur generateFractal(Figuur& fig, const int nr_iterations, const double scale){
-    Figuur fractal = Figuur(fig.color);
-    generateFractal(fig, fractal,nr_iterations,scale, 0);
-    return fractal;
+void generateFractal(Figuur& fig, const int nr_iterations, const double& scale){
+    Figuur copy = Figuur(fig);
+    fig.clear();
+    generateFractal(copy, fig,nr_iterations,scale, 0);
 }
 
+void toPolar(const Vector3D &point, double &alpha, double & beta, double &r){
+    r = sqrt(std::pow(point.x, 2)+std::pow(point.y, 2)+std::pow(point.z, 2));
+    alpha = std::atan2(point.y, point.x);
+    beta = std::acos(point.z/r);
+}
 
+void applyTransformation(Figures3D & figuren, Lights3D& lights, const Matrix& m){
+    for (auto &figuur:figuren) {
+        applyTransformation(figuur,m);
+    }
+    for (auto &light : lights){
+        light->applyTransformation(m);
+    }
+}
+
+void eyePointTrans(const Vector3D &eyepoint, Figures3D & figuren, Lights3D& lights){
+    double alpha;
+    double beta;
+    double r;
+    toPolar(eyepoint,alpha,beta, r);
+    Matrix m = eyePointTransformationMatrix(alpha, beta,r);
+    applyTransformation(figuren, lights, m);
+}
+
+void eyePointVistrum(const Vector3D &eyepoint, const Vector3D &eye_dir, Figures3D & figuren,Lights3D& lights){
+    double alpha;
+    double beta;
+    double r;
+    toPolar(-eye_dir,alpha,beta, r);
+    Matrix m = translate(-eyepoint)* rotateZ(-(alpha+M_PI/2))* rotateX(-beta);
+    applyTransformation(figuren, lights, m);
+}
 
 
 #endif //ENGINE_helpfunctions_H

@@ -5,6 +5,8 @@
 #ifndef ENGINE_MATRICES_H
 #define ENGINE_MATRICES_H
 #include <cmath>
+#include "Light.h"
+
 Matrix eyePointTransformationMatrix(const double alpha, const double beta, const double r){
     Matrix m = Matrix();
     m(1,1) = -sin(alpha);
@@ -68,6 +70,8 @@ void applyTransformation(Figuur & f, const Matrix & m){
         punt *= m;
     }
 }
+
+
 
 
 

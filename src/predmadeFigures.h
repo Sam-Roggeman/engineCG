@@ -7,8 +7,9 @@
 #include "matrices.h"
 #include <unordered_map>
 #include "helpfunctions.h"
-Figuur createCube(Color c){
-    Figuur f = Figuur(c);
+
+
+void createCube(Figuur &f) {
     f.points.emplace_back(Vector3D::point(1,-1,-1));
     f.points.emplace_back(Vector3D::point(-1,1,-1));
     f.points.emplace_back(Vector3D::point(1,1,1));
@@ -23,11 +24,9 @@ Figuur createCube(Color c){
     f.vlakken.emplace_back(Vlak({5,0,6,3}));
     f.vlakken.emplace_back(Vlak({6,2,7,3}));
     f.vlakken.emplace_back(Vlak({0,5,1,4}));
-    return f;
 }
 
-Figuur createTetrahedron(Color color) {
-    Figuur f = Figuur(color);
+void createTetrahedron(Figuur &f) {
     f.points.emplace_back(Vector3D::point(1,-1,-1));
     f.points.emplace_back(Vector3D::point(-1,1,-1));
     f.points.emplace_back(Vector3D::point(1,1,1));
@@ -36,11 +35,9 @@ Figuur createTetrahedron(Color color) {
     f.vlakken.emplace_back(Vlak({1,3,2}));
     f.vlakken.emplace_back(Vlak({0,3,1}));
     f.vlakken.emplace_back(Vlak({0,2,3}));
-    return f;
 }
 
-Figuur createOctahedron(Color color) {
-    Figuur f = Figuur(color);
+void createOctahedron(Figuur &f) {
     f.points.emplace_back(Vector3D::point(1,0,0));
     f.points.emplace_back(Vector3D::point(0,1,0));
     f.points.emplace_back(Vector3D::point(-1,0,0));
@@ -55,11 +52,9 @@ Figuur createOctahedron(Color color) {
     f.vlakken.emplace_back(Vlak({2,1,4}));
     f.vlakken.emplace_back(Vlak({3,2,4}));
     f.vlakken.emplace_back(Vlak({0,3,4}));
-    return f;
 }
 
-Figuur createIcosahedron(Color color) {
-    Figuur f = Figuur(color);
+void createIcosahedron(Figuur &f) {
     f.points.emplace_back(Vector3D::point(0,0,sqrt(5)/2));
     for (int i = 2; i< 7;i++){
         double d = (i-2)*2*M_PI/5;
@@ -95,11 +90,11 @@ Figuur createIcosahedron(Color color) {
     f.vlakken.emplace_back(Vlak({11,10,9}));
     f.vlakken.emplace_back(Vlak({11,6,10}));
 
-    return f;
 }
 
-Figuur createBuckyball(Color color) {
-    Figuur f = createIcosahedron(color);
+void createBuckyball(Figuur &bucky) {
+    Figuur f;
+    createIcosahedron(f);
     Vector3D result;
     Vector3D result2;
     Vector3D start;
@@ -108,7 +103,6 @@ Figuur createBuckyball(Color color) {
     std::unordered_map<const Vector3D*, std::vector<Vector3D>> temppoints;
     std::vector<int> temp;
     std::vector<int> temp2;
-    Figuur bucky = Figuur(color);
     for (auto & vlak:f.vlakken){
         temp = {};
         for (auto p_ind = 0; p_ind < vlak.point_indexes.size(); p_ind++){
@@ -135,23 +129,21 @@ Figuur createBuckyball(Color color) {
     }
     bucky.vlakken.emplace_back(Vlak({120,121,122,123,124}));
     bucky.vlakken.emplace_back(Vlak({125,126,128,129,127}));
-    bucky.vlakken.emplace_back(Vlak({130,131,134,133,132}));
-    bucky.vlakken.emplace_back(Vlak({135,136,139,138,137}));
-    bucky.vlakken.emplace_back(Vlak({140,141,144,143,142}));
-    bucky.vlakken.emplace_back(Vlak({145,146,149,148,147}));
-    bucky.vlakken.emplace_back(Vlak({150,151,153,154,152}));
+    bucky.vlakken.emplace_back(Vlak({133,134,131,130,132}));
+    bucky.vlakken.emplace_back(Vlak({135,137,138,139,136}));
+    bucky.vlakken.emplace_back(Vlak({140,142,143,144,141}));
+    bucky.vlakken.emplace_back(Vlak({145,147,148,149,146}));
+    bucky.vlakken.emplace_back(Vlak({152,154,153,151,150}));
     bucky.vlakken.emplace_back(Vlak({155,156,157,159,158}));
-    bucky.vlakken.emplace_back(Vlak({160,161,162,164,163}));
-    bucky.vlakken.emplace_back(Vlak({165,166,167,169,168}));
-    bucky.vlakken.emplace_back(Vlak({170,171,172,174,173}));
+    bucky.vlakken.emplace_back(Vlak({160,163,164,162,161}));
+    bucky.vlakken.emplace_back(Vlak({165,168,169,167,166}));
+    bucky.vlakken.emplace_back(Vlak({170,173,174,172,171}));
     bucky.vlakken.emplace_back(Vlak({175,176,177,178,179}));
-
-    return bucky;
 }
 
-Figuur createDodecahedron(Color color) {
-    Figuur f = Figuur(color);
-    Figuur ico = createIcosahedron(color);
+void createDodecahedron(Figuur &f ) {
+    Figuur ico;
+    createIcosahedron(ico);
     for (const Vlak& ico_vlak:ico.vlakken){
         double x = 0;
         double y = 0;
@@ -178,11 +170,10 @@ Figuur createDodecahedron(Color color) {
     f.vlakken.emplace_back(Vlak({16,8,7,6,15}));
     f.vlakken.emplace_back(Vlak({15,6,5,14,19}));
 
-    return f;
 }
 
-Figuur createSphere(int iterations, Color color) {
-    Figuur f = createIcosahedron(color);
+void createSphere(int iterations, Figuur& f) {
+    createIcosahedron(f);
     int nr = 0;
     while (nr < iterations) {
         std::vector<Vlak> new_vlakken = {};
@@ -213,11 +204,9 @@ Figuur createSphere(int iterations, Color color) {
     for (Vector3D& point:f.points){
         point.normalise();
     }
-    return f;
 }
 
-Figuur createCone(const double height,const int nr_vlakken, Color c){
-    Figuur f = Figuur(c);
+void createCone(const double height,const int nr_vlakken, Figuur& f){
     for (int i = 0; i < nr_vlakken; i++){
         f.points.emplace_back(Vector3D::point(cos(2*i*M_PI/nr_vlakken),sin(2*i*M_PI/nr_vlakken),0));
     }
@@ -228,12 +217,9 @@ Figuur createCone(const double height,const int nr_vlakken, Color c){
         grd_ind.emplace_back(i);
     }
     f.vlakken.emplace_back(grd_ind);
-
-    return f;
 }
 
-Figuur createCylinder(const double height,const int nr_vlakken, Color c){
-    Figuur f = Figuur(c);
+void createCylinder(const double height,const int nr_vlakken, Figuur& f){
     for (int i = 0; i < nr_vlakken; i++){
         f.points.emplace_back(Vector3D::point(cos(2*i*M_PI/nr_vlakken),sin(2*i*M_PI/nr_vlakken),0));
     }
@@ -249,11 +235,9 @@ Figuur createCylinder(const double height,const int nr_vlakken, Color c){
     }
     f.vlakken.emplace_back(grd_ind);
     f.vlakken.emplace_back(bov_ind);
-    return f;
 }
 
-Figuur createTorus(double r, double R, int n, int m, Color color) {
-    Figuur f = Figuur(color);
+void createTorus(double r, double R, int n, int m, Figuur& f) {
     for (int i = 0; i < n; i++){
         for (int j = 0; j < m; j++) {
             double u = (2*i*M_PI)/n;
@@ -266,11 +250,9 @@ Figuur createTorus(double r, double R, int n, int m, Color color) {
             f.vlakken.emplace_back(Vlak({i*n+j, n*((i+1)%n) + j, n*((i+1)%n) + (j+1)%m ,n*i+(j+1)%m}));
         }
     }
-    return f;
 }
 
-Figuur createVrachtwagen(Color color){
-    Figuur f = Figuur(color);
+Figuur createVrachtwagen(Figuur& f){
     f.points.emplace_back(Vector3D::point(1,-2,-1));
     f.points.emplace_back(Vector3D::point(-1,2,-1));
     f.points.emplace_back(Vector3D::point(1,2,1));
@@ -286,9 +268,9 @@ Figuur createVrachtwagen(Color color){
     f.vlakken.emplace_back(Vlak({6,2,7,3}));
     f.vlakken.emplace_back(Vlak({0,5,1,4}));
 
-    int curr_point_ind = f.points.size();
 
-    Figuur cylinder = createCylinder(1,10, Color(0,0,0));
+    Figuur cylinder;
+    createCylinder(1,10, cylinder);
     applyTransformation(cylinder,transformationMatrix(0.25, M_PI / 2, 0, 0, Vector3D(0,0,0, true)));
     Figuur cylinder2 = Figuur(cylinder);
     Figuur cylinder3 = Figuur(cylinder);
@@ -308,11 +290,10 @@ Figuur createVrachtwagen(Color color){
     f.addfigure(cylinder4);
     f.addfigure(cylinder5);
     f.addfigure(cylinder6);
-    return f;
 }
 
-Figuur createMengerSpons(Color c, int nr_it){
-    Figuur cube = createCube(c);
+void createMengerSpons(Figuur& cube, int nr_it){
+    createCube(cube);
     Figures3D temp = {};
     cube.addpoint(0,-1,-1);
     cube.addpoint(0,1,-1);
@@ -326,13 +307,11 @@ Figuur createMengerSpons(Color c, int nr_it){
     cube.addpoint(-1,-1,0);
     cube.addpoint(-1,1,0);
     cube.addpoint(1,1,0);
-
-    return generateFractal(cube,nr_it,3);
-
+    generateFractal(cube,nr_it,3);
 }
 
-Figuur createViewFrustum(const double FOV, const double dNear, const double dFar, const double aspectratio , Color c){
-    Figuur f = Figuur(c);
+Figuur createViewFrustum(const double FOV, const double dNear, const double dFar, const double aspectratio , Color am){
+    Figuur f = Figuur(am);
     double right = dNear* tan(FOV*M_PI/360);
     double top = right/aspectratio;
 
