@@ -11,7 +11,7 @@
 
 class Figuur {
 public:
-    Figuur(){};
+    Figuur()= default;;
     explicit Figuur(Color color) : ambientReflection(color) {};
     std::vector<Vector3D> points;
     std::vector<Vlak> vlakken;
@@ -53,7 +53,6 @@ public:
         int current_point_ind = points.size();
         std::vector<int> vlak_ind;
         this->points.insert(this->points.end(),figuur2.points.begin(),figuur2.points.end());
-
         for (const auto& vlak:figuur2.vlakken){
             vlak_ind = {};
             for (const auto& point_ind: vlak.point_indexes){

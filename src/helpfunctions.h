@@ -60,18 +60,18 @@ std::vector<Vlak> triangulate(const Vlak& v)  {
 //    }
 //}
 
-void findYExtrema(double &ymin, double &ymax, const Lines2D& lines){
-    Point2D p = lines.front().getP1();
-    if ( lines.empty()){std::cerr<<"No lines" << std::endl;}
-    for (const auto &line:lines){
-        p = line.getP1();
-        for (int i = 0; i<2;i++){
-            if (p.getY() < ymin) ymin = p.getY();
-            else if (p.getY() > ymax) ymax = p.getY();
-            p = line.getP2();
-        }
-    }
-}
+//void findYExtrema(double &ymin, double &ymax, const Lines2D& lines){
+//    Point2D p = lines.front().getP1();
+//    if ( lines.empty()){std::cerr<<"No lines" << std::endl;}
+//    for (const auto &line:lines){
+//        p = line.getP1();
+//        for (int i = 0; i<2;i++){
+//            if (p.getY() < ymin) ymin = p.getY();
+//            else if (p.getY() > ymax) ymax = p.getY();
+//            p = line.getP2();
+//        }
+//    }
+//}
 
 //void sortp( std::vector<Vector3D>& v){
 //    std::vector<Vector3D> sorted = {};

@@ -7,6 +7,7 @@
 #include "vector3d.h"
 #include "Color.h"
 #include <list>
+#include <cmath>
 
 class Light
 {
@@ -19,12 +20,18 @@ public:
     Color diffuseLight;
     //de diffuse licht component
     Color specularLight;
+    virtual double getSpotAngle() const {};
 
     virtual bool isInfLight() const {
         return false;
     }
+    virtual bool isPtLight() const {
+        return false;
+    }
 
-    const virtual Vector3D &getLdVector()const{};
+    virtual const Vector3D &getLdVector()const{};
+
+    virtual const Vector3D &getLocation()const;
     virtual void applyTransformation(const Matrix & m){}
 };
 
@@ -32,7 +39,7 @@ class InfLight: public Light
 {
 public:
     InfLight(const Color &ambientLight, const Color &diffuseLight, const Color &specularLight,
-             Vector3D ldVector);
+             const Vector3D& ldVector);
 
     //de richting waarin het
     //licht schijnt
@@ -40,7 +47,7 @@ public:
     bool isInfLight() const override {
         return true;
     }
-    virtual void applyTransformation(const Matrix & m){
+    void applyTransformation(const Matrix & m) override{
         ldVector*=m;
     }
 
@@ -50,11 +57,25 @@ public:
 class PointLight: public Light
 {
 public:
+    PointLight(const Color &ambientLight, const Color &diffuseLight, const Color &specularLight,
+               const Vector3D &location, const double &spotAngle);
+
     //de locatie van de puntbron
     Vector3D location;
     //de hoek van een spotlicht
     double spotAngle;
+    const Vector3D &getLocation() const override;
+    void applyTransformation(const Matrix & m) override{
+        location*=m;
+    }
+    bool isPtLight() const override{
+        return true;
+    }
+
+    double getSpotAngle() const override;
 };
+
+
 typedef std::list<Light*> Lights3D;
 
 

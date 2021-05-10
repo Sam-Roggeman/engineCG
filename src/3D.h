@@ -121,7 +121,7 @@ Figuur threeDLsystem(Figuur& f, const std::string& filename) {
                     L[i] = L_temp_copy[i] * cos(-alpha*(M_PI/180)) - U_temp_copy[i] * sin(-alpha*(M_PI/180));
                     U[i] = L_temp_copy[i] * sin(-alpha*(M_PI/180)) + U_temp_copy[i] * cos(-alpha*(M_PI/180));
                 }
-            } else if (c == '|') {
+            } else {
                 for (int i = 0; i < 3; i++) {
                     H[i] = -H[i];
                     L[i] = -L[i];
@@ -135,8 +135,8 @@ Figuur threeDLsystem(Figuur& f, const std::string& filename) {
 }
 
 void makeFigures(const ini::Configuration &configuration, Figures3D& figuren) {
-    Figuur f = Figuur(Color(1,1,1));
-    Color am = Color(0,0,0);
+    Figuur f = Figuur();
+    Color am;
     Color diff = Color(0,0,0);
     Color spec = Color(0,0,0);
     double refflco = 0;
@@ -149,8 +149,8 @@ void makeFigures(const ini::Configuration &configuration, Figures3D& figuren) {
         }else{
             am = Color(configuration[name]["ambientReflection"].as_double_tuple_or_default({0,0,0}));
             diff = Color(configuration[name]["diffuseReflection"].as_double_tuple_or_default({0,0,0}));
-            spec = Color(configuration[name]["color"].as_double_tuple_or_default({0,0,0}));
-            refflco = configuration[name]["color"].as_double_or_default(0);
+            spec = Color(configuration[name]["specularReflection"].as_double_tuple_or_default({0,0,0}));
+            refflco = configuration[name]["reflectionCoefficient"].as_double_or_default(0);
         }
         f = Figuur(am,diff,spec,refflco);
 
