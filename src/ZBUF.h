@@ -33,6 +33,8 @@ void  draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image,
     double z_inv_g = 1 / (3 * A.z) + 1 / (3 * B.z) + 1 / (3 * C.z) ;
     double spot_cos;
     int count;
+    std::map<Light*, Vector3D> ld_map;
+    std::map<Light*, double> cos_map;
     Vector3D u = B - A;
     Vector3D v = C - A;
     Vector3D w = Vector3D::cross(u,v);
@@ -42,12 +44,14 @@ void  draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image,
     w.normalise();
     for (const auto & light:lights){
         if (light->isInfLight()){
-            ld = light->getLdVector();
-            ld = -ld;
-            ld.normalise();
-            k =w.dot(ld);
-            if (k>0) {
-                color += (diffuseReflection * light->diffuseLight * k);
+            if (!diffuseReflection.isZero() && light->hasDiff()) {
+                ld = Vector3D::normalise(-light->getLdVector());
+                ld_map[light] = ld;
+                k = w.dot(ld);
+                cos_map[light] = k;
+                if (k > 0) {
+                    color += (diffuseReflection * light->diffuseLight * k);
+                }
             }
         }
         color +=  (light->ambientLight * ambientReflection);
@@ -84,17 +88,35 @@ void  draw_zbuf_triangle(ZBuffer& zbuf, img::EasyImage& image,
                 px_col = color;
                 for (const auto &light:lights){
                     if (light->isPtLight()){
-                        u = Vector3D::point(-(x-dx)/(z_inv*d),-(y-dy)/(z_inv*d),1/z_inv);
-                        ld = Vector3D::normalise(light->getLocation() - u);
-                        k =w.dot(ld);
-                        spot_cos = cos(light->getSpotAngle());
-                        if (k > spot_cos) {
-                            px_col += ((diffuseReflection * light->diffuseLight) * ((k - spot_cos) / (1 - spot_cos)));
-
-                            u = Vector3D::normalise(Vector3D::point(0,0,0)-u);
-                            v = Vector3D::normalise(2*k*w - ld);
+                        if (!diffuseReflection.isZero() && light->hasDiff()) {
+                            u = Vector3D::point(-(x - dx) / (z_inv * d), -(y - dy) / (z_inv * d), 1 / z_inv);
+                            ld = Vector3D::normalise(light->getLocation() - u);
+                            k = w.dot(ld);
+                            spot_cos = cos(light->getSpotAngle());
+                            if (k > spot_cos) {
+                                px_col += ((diffuseReflection * light->diffuseLight) *
+                                           ((k - spot_cos) / (1 - spot_cos)));
+                            }
+                        }
+                        if (!specularReflection.isZero() && light->hasSpec()) {
+                            u = Vector3D::normalise( - u);
+                            v = Vector3D::normalise(2 * k * w - ld);
                             k = u.dot(v);
-                            px_col += ((specularReflection*light->specularLight)*(std::pow(k,reflectionCoeff)));
+                            if (k > 0) {
+                                px_col += ((specularReflection * light->specularLight) *
+                                           (std::pow(k, reflectionCoeff)));
+                            }
+                        }
+                    }
+                    if (light->isInfLight()) {
+                        if (!specularReflection.isZero() && light->hasSpec()) {
+                            u = Vector3D::normalise(-Vector3D::vector(-(x - dx) / (z_inv * d), -(y - dy) / (z_inv * d), 1 / z_inv));
+                            v = Vector3D::normalise(2 * cos_map[light] * w - ld_map[light]);
+                            k = u.dot(v);
+                            if (k > 0) {
+                                px_col += ((specularReflection * light->specularLight) *
+                                           (std::pow(k, reflectionCoeff)));
+                            }
                         }
                     }
                 }
@@ -144,13 +166,13 @@ img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const i
     bool clipping = configuration["General"]["clipping"].as_bool_or_default(false);
     std::list<Figuur> figuren;
     makeFigures(configuration,figuren);
-    std::list<Figuur> temp_figuren;
     std::vector<Vlak> triangulated_vakken = {};
     double Imagex;
     double Imagey;
     double d;
     double dx;
     double dy;
+
     std::vector<int> eye_dir_v = configuration["General"]["viewDirection"].as_int_tuple_or_default({-eye_pos[0],-eye_pos[1], -eye_pos[2]});
     Vector3D eye_dir = Vector3D(eye_dir_v[0], eye_dir_v[1],eye_dir_v[2], true);
     Vector3D eye_vector = Vector3D(eye_pos[0], eye_pos[1],eye_pos[2], true);
@@ -178,7 +200,7 @@ img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const i
             }
             figuur.points.clear();
             figuur.vlakken.clear();
-            for (auto& vlak: completed){
+            for (const auto& vlak: completed){
                 figuur.addVlak(vlak);
             }
         }
@@ -187,21 +209,14 @@ img::EasyImage ZBufferTriangles(const ini::Configuration &configuration, const i
     img::EasyImage image = img::EasyImage(roundToInt(Imagex), roundToInt(Imagey));
     image.clear(bg.imageColor());
     ZBuffer z = ZBuffer(roundToInt(Imagex), roundToInt(Imagey));
-    if (clipping){
-        for (const auto &figuur:figuren) {
-            for (const auto &vlak:figuur.vlakken) {
-                draw_zbuf_triangle(z, image,figuur.points[vlak.point_indexes[0]], figuur.points[vlak.point_indexes[1]], figuur.points[vlak.point_indexes[2]], d, dx, dy,figuur.ambientReflection,figuur.diffuseReflection,figuur.specularReflection,figuur.reflectionCoefficient,lights);
-            }
+    if (!clipping){
+        for (auto &figuur:figuren) {
+            figuur.triangulate();
         }
     }
-    else {
-        for (auto &figuur:figuren) {
-            for (auto &vlak:figuur.vlakken) {
-                triangulated_vakken = triangulate(vlak);
-                for (auto &tri_vlak:triangulated_vakken) {
-                    draw_zbuf_triangle(z, image, figuur.points[tri_vlak.point_indexes[0]], figuur.points[tri_vlak.point_indexes[1]], figuur.points[tri_vlak.point_indexes[2]], d, dx, dy,figuur.ambientReflection,figuur.diffuseReflection,figuur.specularReflection,figuur.reflectionCoefficient,lights);
-                }
-            }
+    for (const auto &figuur:figuren) {
+        for (const auto &vlak:figuur.vlakken) {
+            draw_zbuf_triangle(z, image,figuur.points[vlak.point_indexes[0]], figuur.points[vlak.point_indexes[1]], figuur.points[vlak.point_indexes[2]], d, dx, dy,figuur.ambientReflection,figuur.diffuseReflection,figuur.specularReflection,figuur.reflectionCoefficient,lights);
         }
     }
     for (auto& light:lights){

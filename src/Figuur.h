@@ -21,6 +21,19 @@ public:
     Color specularReflection = Color(0,0,0);
     double reflectionCoefficient = 1;
 
+    bool hasAmb(){
+        return !ambientReflection.isZero();
+    }
+
+    bool hasDiff(){
+        return !diffuseReflection.isZero();
+    }
+
+    bool hasSpec(){
+        return !specularReflection.isZero();
+    }
+
+
     void clear(){
         points.clear();
         vlakken.clear();
@@ -70,15 +83,30 @@ public:
         return v;
     }
 
-    void addVlak(std::vector<Vector3D> &vector) {
+    void addVlak(const std::vector<Vector3D> &vector) {
         std::vector<int> ind;
         for (auto& hoek:vector){
             ind.emplace_back(points.size());
             points.emplace_back(hoek);
         }
         vlakken.emplace_back(Vlak(ind));
+    }
+
+    void triangulate()  {
+        auto temp = vlakken;
+        vlakken.clear();
+        Vlak n_vlak;
+        int size;
+        for (auto &vlak:temp) {
+            size = vlak.point_indexes.size();
+            for (int ind = 1; ind < size-1; ind++){
+                n_vlak = Vlak({vlak.point_indexes[0], vlak.point_indexes[ind], vlak.point_indexes[ind+1]});
+                vlakken.emplace_back(n_vlak);
+            }
+        }
 
     }
+
 };
 
 

@@ -62,208 +62,107 @@ void clipPane(std::vector<Vector3D> pane, int i, std::vector<std::vector<Vector3
                 b_inside = B->z >= dval;
                 c_inside = C->z >= dval;
             }
-            if (a_inside) count++;
-            if (b_inside) count++;
-            if (c_inside) count++;
- if (count ==0) {
-                break;
-            } else if (count == 1) {
-                if (!a_inside && !b_inside) {
-                    //AC
-                    X = C; Y = A;
-                    //BC
-                    X2 = B; Y2 = C;
-                    C2 = *C;
-                } else if (!a_inside && !c_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //CB
-                    X2 = B; Y2 = C;
-                    C2 = *B;
-                } else if (!c_inside && !b_inside) {
-                    //CA
-                    X = A; Y = C;
-                    //BA
-                    X2 = B; Y2 = A;
-                    C2 = *A;
-                }
-            }else if (count == 2){
-                if (!a_inside) {
-                    //AC
-                    X = C; Y = A;
-                    //AB
-                    X2 = A; Y2 = B;
-                    B2 = *C;
-                    C2 = *B;
-                } else if (!c_inside) {
-                    //AC
-                    X = C; Y = A;
-                    //BC
-                    X2 = B; Y2 = C;
-                    B2 = *A;
-                    C2 = *B;
-                } else if (!b_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //BC
-                    X2 = B; Y2 = C;
-                    B2 = *A;
-                    C2 = *C;
-                }
-            }
-            calculatepFrBckPs(X,Y,X2,Y2,p,p2,dval);
-        }else if (rechts||links){
-            dNear = -std::max(std::max(pane[0].z, pane[1].z),std::max(pane[2].z, pane[3].z));
-            dval = pane[0].x*(-dNear)/pane[0].z;
+        }else if (rechts||links) {
+            dNear = -std::max(std::max(pane[0].z, pane[1].z), std::max(pane[2].z, pane[3].z));
+            dval = pane[0].x * (-dNear) / pane[0].z;
             if (rechts) {
-                dval2 = A->x*(-dNear)/A->z;
+                dval2 = A->x * (-dNear) / A->z;
                 a_inside = (dval2 <= dval);
-                dval2 = B->x*(-dNear)/B->z;
+                dval2 = B->x * (-dNear) / B->z;
                 b_inside = (dval2 <= dval);
-                dval2 = C->x*(-dNear)/C->z;
+                dval2 = C->x * (-dNear) / C->z;
                 c_inside = (dval2 <= dval);
             } else {
-                dval2 = A->x*(-dNear)/A->z;
+                dval2 = A->x * (-dNear) / A->z;
                 a_inside = (dval2 >= dval);
-                dval2 = B->x*(-dNear)/B->z;
+                dval2 = B->x * (-dNear) / B->z;
                 b_inside = (dval2 >= dval);
-                dval2 = C->x*(-dNear)/C->z;
+                dval2 = C->x * (-dNear) / C->z;
                 c_inside = (dval2 >= dval);
             }
-            if (a_inside) count++;
-            if (b_inside) count++;
-            if (c_inside) count++;
- if (count ==0) {
-                break;
-            }else if (count == 1) {
-                if (!a_inside && !b_inside) {
-                    //AC
-                    X = C; Y = A;
-                    //BC
-                    X2 = B; Y2 = C;
-                    C2 = *C;
-                } else if (!a_inside && !c_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //CB
-                    X2 = B; Y2 = C;
-                    C2 = *B;
-                } else if (!c_inside && !b_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //AC
-                    X2 = C; Y2 = A;
-                    C2 = *A;
-                }
-            }else if (count == 2){
-                if (!a_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //AC
-                    X2 = C; Y2 = A;
-                    B2 = *B;
-                    C2 = *C;
-                } else if (!c_inside) {
-                    //AC
-                    X = C; Y = A;
-                    //BC
-                    X2 = B; Y2 = C;
-                    B2 = *A;
-                    C2 = *B;
-                } else if (!b_inside) {
-                    //AB
-                    X = A; Y = B;
-                    //BC
-                    X2 = B; Y2 = C;
-                    B2 = *A;
-                    C2 = *C;
-                }
-            }
-            calculatepRLPs(X,Y,X2,Y2,p,p2,dval,dNear);
         } else if (boven||onder) {
             dNear = -std::max(std::max(pane[0].z, pane[1].z), std::max(pane[2].z, pane[3].z));
             dval = -pane[0].y * dNear / pane[0].z;
             if (boven) {
-                a_inside =  -A->y*dNear/A->z <= dval;
-                b_inside = -B->y*dNear/B->z <= dval;
-                c_inside = -C->y*dNear/C->z <= dval;
+                a_inside = -A->y * dNear / A->z <= dval;
+                b_inside = -B->y * dNear / B->z <= dval;
+                c_inside = -C->y * dNear / C->z <= dval;
             } else {
-                a_inside = -A->y*dNear/A->z >= dval;
-                b_inside = -B->y*dNear/B->z >= dval;
-                c_inside = -C->y*dNear/C->z >= dval;
+                a_inside = -A->y * dNear / A->z >= dval;
+                b_inside = -B->y * dNear / B->z >= dval;
+                c_inside = -C->y * dNear / C->z >= dval;
             }
-            if (a_inside) count++;
-            if (b_inside) count++;
-            if (c_inside) count++;
- if (count ==0) {
-                break;
-            } else if (count == 1) {
-                if (!a_inside && !b_inside) {
-                    //AC
-                    X = C;
-                    Y = A;
-                    //BC
-                    X2 = B;
-                    Y2 = C;
-                    C2 = *C;
-                } else if (!a_inside && !c_inside) {
-                    //AB
-                    X = A;
-                    Y = B;
-                    //CB
-                    X2 = B;
-                    Y2 = C;
-                    C2 = *B;
-                } else if (!c_inside && !b_inside) {
-                    //AB
-                    X = A;
-                    Y = B;
-                    //AC
-                    X2 = C;
-                    Y2 = A;
-                    C2 = *A;
-                }
-            } else if (count == 2) {
-                if (!a_inside) {
-                    //AB
-                    X = A;
-                    Y = B;
-                    //AC
-                    X2 = C;
-                    Y2 = A;
-                    B2 = *B;
-                    C2 = *C;
-                } else if (!c_inside) {
-                    //BC
-                    X = B;
-                    Y = C;
-                    //CA
-                    X2 = A;
-                    Y2 = C;
-                    B2 = *B;
-                    C2 = *A;
-                } else if (!b_inside) {
-                    //AB
-                    X = A;
-                    Y = B;
-                    //BC
-                    X2 = B;
-                    Y2 = C;
-                    B2 = *A;
-                    C2 = *C;
-                }
-            }
-            calculatepUpDownPs(X,Y,X2,Y2,p,p2,dval,dNear);
+        }
+        if (a_inside) count++;
+        if (b_inside) count++;
+        if (c_inside) count++;
+        if (count ==0) {
+            continue;
         }
         if (count ==3) {
             A2 = *A;
             B2 = *B;
             C2 = *C;
             nw_l.emplace_back(std::vector<Vector3D>({A2,B2,C2}));
+            continue;
         }
-        else if (count == 2) {
-            A2 = (p * *X) + ((1 - p) * *Y);
-            D2 = (p2 * *X2) + ((1 - p2) * *Y2);
+        else if (count == 1) {
+            if (!a_inside && !b_inside) {
+                //AC
+                X = C; Y = A;
+                //BC
+                X2 = B; Y2 = C;
+                C2 = *C;
+            } else if (!a_inside && !c_inside) {
+                //AB
+                X = A; Y = B;
+                //CB
+                X2 = B; Y2 = C;
+                C2 = *B;
+            } else if (!c_inside && !b_inside) {
+                //AB
+                X = A; Y = B;
+                //AC
+                X2 = A; Y2 = C;
+                C2 = *A;
+            }
+        }else if (count == 2){
+            if (!a_inside) {
+                //AB
+                X = A; Y = B;
+                //AC
+                X2 = A; Y2 = C;
+                B2 = *B;
+                C2 = *C;
+            } else if (!c_inside) {
+                //AC
+                X = C; Y = A;
+                //BC
+                X2 = B; Y2 = C;
+                B2 = *A;
+                C2 = *B;
+            } else if (!b_inside) {
+                //AB
+                X = A; Y = B;
+                //BC
+                X2 = B; Y2 = C;
+                B2 = *A;
+                C2 = *C;
+            }
+        }
+
+        if (near||far) {
+            calculatepFrBckPs(X, Y, X2, Y2, p, p2, dval);
+        }
+        else if (boven||onder){
+            calculatepUpDownPs(X,Y,X2,Y2,p,p2,dval,dNear);
+        }
+        else if (rechts||links){
+            calculatepRLPs(X,Y,X2,Y2,p,p2,dval,dNear);
+        }
+        if (count == 2) {
+            A2 = (p * *X) + ((1.0 - p) * *Y);
+            D2 = (p2 * *X2) + ((1.0 - p2) * *Y2);
             nw_l.emplace_back(std::vector<Vector3D>({D2, A2, C2}));
             nw_l.emplace_back(std::vector<Vector3D>({A2,B2,C2}));
         }

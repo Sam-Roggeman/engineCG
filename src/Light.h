@@ -29,6 +29,15 @@ public:
         return false;
     }
 
+    bool hasAmb(){
+        return (!ambientLight.isZero());
+    }
+    bool hasDiff(){
+        return (!diffuseLight.isZero());
+    }
+    bool hasSpec(){
+        return (!specularLight.isZero());
+    }
     virtual const Vector3D &getLdVector()const{};
 
     virtual const Vector3D &getLocation()const;
@@ -64,6 +73,10 @@ public:
     Vector3D location;
     //de hoek van een spotlicht
     double spotAngle;
+    ZBuffer shadow_mask;
+    Matrix eye;
+    double d,dx,dy;
+
     const Vector3D &getLocation() const override;
     void applyTransformation(const Matrix & m) override{
         location*=m;

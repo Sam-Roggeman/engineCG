@@ -30,6 +30,10 @@ public:
     Color() {
         red = 0;blue=0;green = 0;
     }
+
+    bool isZero() const {
+        return red == 0 && blue == 0 && green == 0;
+    }
 };
 
 
